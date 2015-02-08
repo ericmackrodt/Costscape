@@ -15,9 +15,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\WindowDimensionBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BudgetItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BudgetSection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserControls\BudgetGrid.xaml.cs">
+      <DependentUpon>BudgetGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BudgetViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)UserControls\BudgetGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

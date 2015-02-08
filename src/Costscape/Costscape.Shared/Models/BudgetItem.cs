@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Costscape.Models
 {
-    class BudgetItem
+    public class BudgetItem
     {
+        public string Title { get; set; }
+        public decimal Value { get; set; }
+        public decimal ValueConverted { get; set; }
     }
 }
