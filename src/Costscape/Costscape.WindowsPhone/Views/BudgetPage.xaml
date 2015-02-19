@@ -37,6 +37,13 @@
             <Setter Property="Background" Value="{StaticResource ItemsBackgroundBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
+        
+        <Style x:Key="TextBoxCell" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Background" Value="{StaticResource ItemsBackgroundBrush}" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+        </Style>
 
         <DataTemplate x:Key="DefaultItemDetailTemplate">
             <Grid HorizontalAlignment="Left">
@@ -54,13 +61,15 @@
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBlock Text="{Binding Value}" Style="{StaticResource TextBlockCell}" />
+                        <TextBox Text="{Binding Value, Mode=TwoWay}" Style="{StaticResource TextBoxCell}" />
+                        <!--<TextBlock Text="{Binding Value}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBlock Text="{Binding ValueConverted}" Style="{StaticResource TextBlockCell}" />
+                        <TextBox Text="{Binding Value, Mode=TwoWay}" Style="{StaticResource TextBoxCell}" />
+                        <!--<TextBlock Text="{Binding ValueConverted}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
                         </i:Interaction.Behaviors>

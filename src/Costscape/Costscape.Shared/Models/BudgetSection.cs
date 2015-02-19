@@ -7,12 +7,15 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 using System.Linq;
+using Broadcaster;
 
 namespace Costscape.Models
 {
     public class BudgetSection : ObservableCollection<BudgetItem>, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private IBroadcaster _broadcaster;
 
         private string _name;
         public string Name
