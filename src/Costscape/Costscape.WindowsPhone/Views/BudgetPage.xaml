@@ -7,11 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:Costscape.Common.Behaviors"
+    xmlns:common="using:Costscape.Common"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Path=BudgetViewModel, Source={StaticResource ViewModels}}">
 
     <Page.Resources>
+        <common:DecimalConverter x:Key="Decimal" />
         <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#696969"/>
         <SolidColorBrush x:Key="ItemsBackgroundBrush" Color="#A9A9A9"/>
         <SolidColorBrush x:Key="StackPanelBackgroundBrush" Color="Transparent"/>
@@ -61,14 +63,14 @@
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBox Text="{Binding Value, Mode=TwoWay}" Style="{StaticResource TextBoxCell}" />
+                        <TextBox Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
                         <!--<TextBlock Text="{Binding Value}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBox Text="{Binding Value, Mode=TwoWay}" Style="{StaticResource TextBoxCell}" />
+                        <TextBox Text="{Binding ValueConverted, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
                         <!--<TextBlock Text="{Binding ValueConverted}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
@@ -118,6 +120,7 @@
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Orientation="Vertical">
+                <Button Content="Add" Command="{Binding AddNewItemCommand}" />
                 <ItemsControl ItemsSource="{Binding Source={StaticResource Lists}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>

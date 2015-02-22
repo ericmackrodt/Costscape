@@ -1,71 +1,62 @@
 ﻿using Costscape.Models;
 using MVVMBasic;
+using MVVMBasic.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Windows.Input;
+using System.Linq;
 
 namespace Costscape.ViewModels
 {
     public class BudgetViewModel : BaseViewModel
     {
-        private ObservableCollection<BudgetSection> _items;
-        public ObservableCollection<BudgetSection> Items
+        private ObservableCollection<BudgetSection> _budgetSections;
+        public ObservableCollection<BudgetSection> BudgetSections
         {
-            get { return _items; }
+            get { return _budgetSections; }
             set
             {
-                _items = value;
+                _budgetSections = value;
                 NotifyChanged();
             }
+        }
+        
+        private ICommand _addNewItemCommand;
+        public ICommand AddNewItemCommand
+        {
+            get { return _addNewItemCommand; }
         }
 
         public BudgetViewModel()
         {
-            Items = new ObservableCollection<BudgetSection>();
-            var section1 = new BudgetSection();
-            section1.Name = "Current Money";
-            section1.Add(new BudgetItem() { Title = "Item 1", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 2", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section1.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            Items.Add(section1);
-            var section2 = new BudgetSection();
-            section2.Name = "Future Money";
-            section2.Add(new BudgetItem() { Title = "Item 1", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 2", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section2.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            Items.Add(section2);
-            var section3 = new BudgetSection();
-            section3.Name = "Whatever Money";
-            section3.Add(new BudgetItem() { Title = "Item 1", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 2", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 3", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            section3.Add(new BudgetItem() { Title = "Item 4", Value = 100000.1m, ValueConverted = 1.30m });
-            Items.Add(section3);
+            _addNewItemCommand = new RelayCommand(AddNewItem);
+        }
+
+        private void AddNewItem(object obj)
+        {
+            if (BudgetSections == null)
+                BudgetSections = new ObservableCollection<BudgetSection>();
+
+            if (!BudgetSections.Any())
+                BudgetSections.Add(new BudgetSection() { Name = "Section" });
+
+            BudgetSections[0].Add(new BudgetItem(OnValueChanged) { Title = "Item", Value = 0, ValueConverted = 0 });
+            Recalculate();
+        }
+
+        private void OnValueChanged(BudgetItem obj)
+        {
+            Recalculate();
+        } 
+
+        private void Recalculate()
+        {
+            foreach (var section in BudgetSections)
+            {
+                section.RecalculateTotals();
+            }
         }
     }
 }

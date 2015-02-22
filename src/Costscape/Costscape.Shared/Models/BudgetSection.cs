@@ -8,14 +8,13 @@ using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 using System.Linq;
 using Broadcaster;
+using Costscape.Common.Enums;
 
 namespace Costscape.Models
 {
     public class BudgetSection : ObservableCollection<BudgetItem>, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private IBroadcaster _broadcaster;
 
         private string _name;
         public string Name
@@ -50,7 +49,18 @@ namespace Costscape.Models
             }
         }
 
-        private void RecalculateTotals()
+        private BudgetSectionType _sectionType;
+        public BudgetSectionType SectionType
+        {
+            get { return _sectionType; }
+            set
+            {
+                _sectionType = value;
+                NotifyChanged();
+            }
+        }
+
+        public void RecalculateTotals()
         {
             Total = this.Sum(o => o.Value);
             TotalConverted = this.Sum(o => o.ValueConverted);
