@@ -1,4 +1,5 @@
 ﻿using Costscape.Common;
+using Costscape.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,8 @@ namespace Costscape.Views
     public sealed partial class BudgetPage : Page
     {
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
+
+        public BudgetViewModel ViewModel { get { return (BudgetViewModel)DataContext; } }
 
         public BudgetPage()
         {
@@ -43,15 +45,6 @@ namespace Costscape.Views
         public NavigationHelper NavigationHelper
         {
             get { return this.navigationHelper; }
-        }
-
-        /// <summary>
-        /// Gets the view model for this <see cref="Page"/>.
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
         }
 
         /// <summary>
@@ -99,13 +92,27 @@ namespace Costscape.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+
+            ViewModel.NewBudgetSectionCreated += ViewModel_NewBudgetSectionCreated;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+
+            ViewModel.NewBudgetSectionCreated -= ViewModel_NewBudgetSectionCreated;
         }
 
         #endregion
+
+        private void ViewModel_NewBudgetSectionCreated(object sender, EventArgs e)
+        {
+            AddSectionFlyout.Hide();
+        }
+
+        private void AddSectionFlyout_Closed(object sender, object e)
+        {
+            ViewModel.NewBudgetSection = null;
+        }
     }
 }

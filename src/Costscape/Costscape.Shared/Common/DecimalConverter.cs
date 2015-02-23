@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Data;
 using System.Linq;
+using System.Globalization;
 
 namespace Costscape.Common
 {
@@ -15,7 +16,7 @@ namespace Costscape.Common
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (string.IsNullOrWhiteSpace((string)value) || ((string)value).Any(o => !char.IsDigit(o)))
+            if (string.IsNullOrWhiteSpace((string)value) || ((string)value).Any(o => !char.IsDigit(o) && o.ToString() != CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator))
                 return 0;
 
             return decimal.Parse((string)value);

@@ -8,6 +8,9 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:Costscape.Common.Behaviors"
     xmlns:common="using:Costscape.Common"
+    xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
+    xmlns:telerikCore="using:Telerik.Core"
+    x:Name="BudgetPageElement"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Path=BudgetViewModel, Source={StaticResource ViewModels}}">
@@ -63,14 +66,14 @@
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBox Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
+                        <TextBox InputScope="Number" Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
                         <!--<TextBlock Text="{Binding Value}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
                         </i:Interaction.Behaviors>
                     </Border>
                     <Border Style="{StaticResource BorderCell}">
-                        <TextBox Text="{Binding ValueConverted, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
+                        <TextBox InputScope="Number" Text="{Binding ValueConverted, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
                         <!--<TextBlock Text="{Binding ValueConverted}" Style="{StaticResource TextBlockCell}" />-->
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
@@ -80,10 +83,18 @@
             </Grid>
         </DataTemplate>
 
-        <CollectionViewSource x:Key="Lists" Source="{Binding Items}" />
+        <CollectionViewSource x:Key="Lists" Source="{Binding BudgetSections}" />
+        
+        <Flyout x:Key="AddSectionFlyout" x:Name="AddSectionFlyout" Closed="AddSectionFlyout_Closed">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Add new section" />
+                <TextBlock Text="Section Name:" />
+                <TextBox Text="{Binding Path=NewBudgetSection.Name, Mode=TwoWay}" />
+                <Button Content="Add" Command="{Binding AddNewSectionCommand}" />
+            </StackPanel>
+        </Flyout>
     </Page.Resources>
     <Grid x:Name="LayoutRoot">
-
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
@@ -117,63 +128,76 @@
                 </i:Interaction.Behaviors>
             </Border>
         </StackPanel>
-
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Orientation="Vertical">
-                <Button Content="Add" Command="{Binding AddNewItemCommand}" />
-                <ItemsControl ItemsSource="{Binding Source={StaticResource Lists}}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <Border Background="Blue">
-                                    <TextBlock Text="{Binding Name}" Foreground="White" />
-                                </Border>
-                                <ItemsControl ItemsSource="{Binding}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}" />
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Background="{StaticResource StackPanelBackgroundBrush}" HorizontalAlignment="Left">
-                                    <Border Style="{StaticResource BorderCell}">
-                                        <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.6" />
-                                        </i:Interaction.Behaviors>
-                                    </Border>
-                                    <Border Style="{StaticResource BorderCell}">
-                                        <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                                        </i:Interaction.Behaviors>
-                                    </Border>
-                                    <Border Style="{StaticResource BorderCell}">
-                                        <TextBlock Text="{Binding TotalConverted}" Style="{StaticResource TextBlockCell}" />
-                                        <i:Interaction.Behaviors>
-                                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                                        </i:Interaction.Behaviors>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>            
-        </ScrollViewer>
         
-        <!--<uc:BudgetGrid Grid.Row="1" />-->
-        <!--<SemanticZoom Grid.Row="1" Style="{StaticResource GenericJumpListStyle}"
-              Margin="0,0,0,0">
-            <SemanticZoom.ZoomedInView>
-                <ListView ItemsSource="{Binding Source={StaticResource Lists}}"
-                          ItemTemplate="{StaticResource DefaultItemDetailTemplate}">
-                    <ListView.GroupStyle>
-                        <GroupStyle HeaderTemplate="{StaticResource GenericGroupHeaderTemplate}"
-                            HeaderContainerStyle="{StaticResource JumpListListHeaderContainerStyle}"
-                            HidesIfEmpty="True" />
-                    </ListView.GroupStyle>
-                </ListView>
-            </SemanticZoom.ZoomedInView>
-            <SemanticZoom.ZoomedOutView>
-                <ListView ItemsSource="{Binding Path=CollectionGroups, Source={StaticResource Lists}}"
-                  Style="{StaticResource GenericJumpListPickerStyle}">
-                </ListView>
-            </SemanticZoom.ZoomedOutView>
-        </SemanticZoom>-->
+        <telerikPrimitives:RadDataBoundListBox Grid.Row="1" ItemsSource="{Binding BudgetSections}"
+                                               ItemAnimationMode="PlayAll">
+            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                    <telerikCore:RadFadeAnimation.Easing>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </telerikCore:RadFadeAnimation.Easing>
+                </telerikCore:RadFadeAnimation>
+            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+            <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="Blue">
+                                <TextBlock Text="{Binding Name}" Foreground="White" />
+                            </Border>
+                            <Button Grid.Column="1" Content="+" Command="{Binding Path=DataContext.AddNewItemCommand, ElementName=BudgetPageElement}" CommandParameter="{Binding}" />
+                        </Grid>
+
+                        <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
+                                                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                                <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                                    <telerikCore:RadFadeAnimation.Easing>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </telerikCore:RadFadeAnimation.Easing>
+                                </telerikCore:RadFadeAnimation>
+                            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                        </telerikPrimitives:RadDataBoundListBox>                        
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Background="{StaticResource StackPanelBackgroundBrush}" HorizontalAlignment="Left">
+                            <Border Style="{StaticResource BorderCell}">
+                                <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
+                                <i:Interaction.Behaviors>
+                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.6" />
+                                </i:Interaction.Behaviors>
+                            </Border>
+                            <Border Style="{StaticResource BorderCell}">
+                                <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
+                                <i:Interaction.Behaviors>
+                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
+                                </i:Interaction.Behaviors>
+                            </Border>
+                            <Border Style="{StaticResource BorderCell}">
+                                <TextBlock Text="{Binding TotalConverted}" Style="{StaticResource TextBlockCell}" />
+                                <i:Interaction.Behaviors>
+                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
+                                </i:Interaction.Behaviors>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+            <telerikPrimitives:RadDataBoundListBox.ListFooterContent>
+                <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}" />
+            </telerikPrimitives:RadDataBoundListBox.ListFooterContent>
+        </telerikPrimitives:RadDataBoundListBox>
     </Grid>
+    
+    <Page.BottomAppBar>
+        <CommandBar IsSticky="False" x:Name="AppBar">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Add" IsCompact="False" Label="Add Section" Flyout="{StaticResource AddSectionFlyout}" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

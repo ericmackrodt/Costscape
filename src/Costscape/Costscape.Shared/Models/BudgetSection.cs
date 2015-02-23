@@ -14,7 +14,7 @@ namespace Costscape.Models
 {
     public class BudgetSection : ObservableCollection<BudgetItem>, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         public string Name
