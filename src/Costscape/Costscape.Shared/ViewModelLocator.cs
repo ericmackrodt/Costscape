@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Costscape.Common;
 using Costscape.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Costscape
         public ViewModelLocator()
         {
             var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.RegisterType<DataManager>().As<IDataManager>();
 
             containerBuilder.RegisterType<MainViewModel>();
             containerBuilder.RegisterType<BudgetViewModel>();

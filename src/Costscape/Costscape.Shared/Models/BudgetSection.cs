@@ -9,14 +9,29 @@ using System.Collections.Specialized;
 using System.Linq;
 using Broadcaster;
 using Costscape.Common.Enums;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
+using MVVMBasic;
 
 namespace Costscape.Models
 {
-    public class BudgetSection : ObservableCollection<BudgetItem>, INotifyPropertyChanged
+    [Table("BudgetSections")]
+    public class BudgetSection : BaseViewModel
     {
-        public new event PropertyChangedEventHandler PropertyChanged;
+        private int _budgetSectionID;
+        [PrimaryKey, AutoIncrement]
+        public int BudgetSectionID
+        {
+            get { return _budgetSectionID; }
+            set
+            {
+                _budgetSectionID = value;
+                NotifyChanged();
+            }
+        }
 
         private string _name;
+        [NotNull]
         public string Name
         {
 	        get { return _name;}
@@ -28,6 +43,7 @@ namespace Costscape.Models
         }
 
         private decimal _total;
+        [Ignore]
         public decimal Total
         {
             get { return _total; }
@@ -38,18 +54,8 @@ namespace Costscape.Models
             }
         }
 
-        private decimal _totalConverted;
-        public decimal TotalConverted
-        {
-            get { return _totalConverted; }
-            set
-            {
-                _totalConverted = value;
-                NotifyChanged();
-            }
-        }
-
         private BudgetSectionType _sectionType;
+        [NotNull, Default(value: BudgetSectionType.Debit)]
         public BudgetSectionType SectionType
         {
             get { return _sectionType; }
@@ -60,22 +66,65 @@ namespace Costscape.Models
             }
         }
 
+        [ManyToOne]
+        public Budget Budget { get; set; }
+        
+        [ForeignKey(typeof(Budget))]
+        public int BudgetID { get; set; }
+
+        private ObservableCollection<BudgetItem> _items;
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public ObservableCollection<BudgetItem> Items
+        {
+            get { return _items; }
+            set
+            {
+                _items = value;
+                NotifyChanged();
+            }
+        }
+
+        [Ignore]
+        public override bool IsBusy
+        {
+            get
+            {
+                return base.IsBusy;
+            }
+            set
+            {
+                base.IsBusy = value;
+            }
+        }
+
+        [Ignore]
+        public override bool IsDataLoaded
+        {
+            get
+            {
+                return base.IsDataLoaded;
+            }
+            set
+            {
+                base.IsDataLoaded = value;
+            }
+        }
+
+        public BudgetSection()
+        {
+        }
+
+        public void Add(BudgetItem item)
+        {
+            if (Items == null)
+                Items = new ObservableCollection<BudgetItem>();
+
+            Items.Add(item);
+        }
+
         public void RecalculateTotals()
         {
-            Total = this.Sum(o => o.Value);
-            TotalConverted = this.Sum(o => o.ValueConverted);
-        }
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-            RecalculateTotals();
-        }
-
-        private void NotifyChanged([CallerMemberName]string propertyName = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            Total = Items.Sum(o => o.Value);
         }
     }
 }

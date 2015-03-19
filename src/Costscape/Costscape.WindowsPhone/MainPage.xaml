@@ -6,10 +6,57 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:Costscape.UserControls"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:Costscape.Common.Behaviors"
+    xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
+    xmlns:telerikCore="using:Telerik.Core"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Path=MainViewModel, Source={StaticResource ViewModels}}">
+    
+    <Page.Resources>
+        <DataTemplate x:Key="BudgetItemTemplate">
+            <Border Margin="0,0,0,5" Background="{ThemeResource MainPageBudgetListBackground}"
+                    Padding="10">
+                <TextBlock Style="{ThemeResource DefaultTextBlock}"
+                           Foreground="{ThemeResource MainPageBudgetListForeground}"
+                           Text="{Binding Name}" />
+            </Border>
+        </DataTemplate>
+        
+        <Flyout x:Key="NewBudgetFlyout" x:Name="NewBudgetFlyout" Closed="NewBudgetFlyout_Closed">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Add new Budget" />
+                <TextBlock Text="Budget Name:" />
+                <TextBox Text="{Binding Path=NewBudget.Name, Mode=TwoWay}" />
+                <Button Content="Add" Command="{Binding AddNewBudgetCommand}" />
+            </StackPanel>
+        </Flyout>
+    </Page.Resources>
     <Grid>
-        <Button Content="Navigate Dude!" Click="Button_Click" />
+        <StackPanel>
+            <telerikPrimitives:RadDataBoundListBox x:Name="BudgetList" ItemsSource="{Binding Budgets}"
+                                                   Margin="20"
+                                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                   SelectionChanged="BudgetList_SelectionChanged"
+                                                   ItemTemplate="{StaticResource BudgetItemTemplate}">
+                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                        <telerikCore:RadFadeAnimation.Easing>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </telerikCore:RadFadeAnimation.Easing>
+                    </telerikCore:RadFadeAnimation>
+                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+            </telerikPrimitives:RadDataBoundListBox>
+        </StackPanel>
     </Grid>
+    
+    <Page.BottomAppBar>
+        <CommandBar IsSticky="True">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Add" Label="New Budget" Flyout="{StaticResource NewBudgetFlyout}" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

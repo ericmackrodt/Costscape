@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MVVMBasic.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -127,8 +128,7 @@ namespace Costscape.Common
                 if (_goBackCommand == null)
                 {
                     _goBackCommand = new RelayCommand(
-                        () => this.GoBack(),
-                        () => this.CanGoBack());
+                        (o) => this.GoBack()) { IsEnabled = this.CanGoBack() };
                 }
                 return _goBackCommand;
             }
@@ -151,8 +151,7 @@ namespace Costscape.Common
                 if (_goForwardCommand == null)
                 {
                     _goForwardCommand = new RelayCommand(
-                        () => this.GoForward(),
-                        () => this.CanGoForward());
+                        (o) => this.GoForward()) { IsEnabled = this.CanGoForward() };
                 }
                 return _goForwardCommand;
             }

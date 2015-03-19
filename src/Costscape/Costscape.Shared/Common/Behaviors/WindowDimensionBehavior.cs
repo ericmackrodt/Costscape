@@ -35,7 +35,6 @@ namespace Costscape.Common.Behaviors
 
             this.TypedObject.Loaded += TypedObject_Loaded;
             Window.Current.SizeChanged += Current_SizeChanged;
-
         }
 
         void TypedObject_Loaded(object sender, RoutedEventArgs e)
@@ -52,9 +51,14 @@ namespace Costscape.Common.Behaviors
         {
             var frameWorkElement = (this.TypedObject as FrameworkElement);
 
+            var parentBorder = (frameWorkElement.Parent as FrameworkElement).Margin.Right * 2;
+
             //I base all the percentage calculations on shortest dimension, you can modify this depending on your layouts requirements.
             double shortestDimension = (Window.Current.Bounds.Width <= Window.Current.Bounds.Height) ?
                             Window.Current.Bounds.Width : Window.Current.Bounds.Height;
+
+            //TODO: improve this pls
+            shortestDimension -= 2;
 
             if (frameWorkElement != null)
             {

@@ -15,12 +15,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\TextBoxUpdateBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\WindowDimensionBehavior.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\DecimalConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\DecimalConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\ObservableObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\DataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Enums\BudgetSectionType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IDataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BudgetItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BudgetSection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Budget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TotalData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UserControls\BudgetGrid.xaml.cs">
       <DependentUpon>BudgetGrid.xaml</DependentUpon>

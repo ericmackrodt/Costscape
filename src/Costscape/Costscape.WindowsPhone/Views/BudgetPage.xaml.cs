@@ -1,4 +1,5 @@
 ﻿using Costscape.Common;
+using Costscape.Models;
 using Costscape.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -89,11 +90,17 @@ namespace Costscape.Views
         /// </summary>
         /// <param name="e">Provides data for navigation methods and event
         /// handlers that cannot cancel the navigation request.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
 
             ViewModel.NewBudgetSectionCreated += ViewModel_NewBudgetSectionCreated;
+
+            var budget = e.Parameter as Budget;
+
+            if (budget == null) return;
+
+            await ViewModel.LoadData(budget);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

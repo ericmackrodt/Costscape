@@ -8,12 +8,17 @@ using System.Text;
 using System.Windows.Input;
 using System.Linq;
 using Costscape.Common.Enums;
+using Costscape.Common;
+using System.Threading.Tasks;
 
 namespace Costscape.ViewModels
 {
     public class BudgetViewModel : BaseViewModel
     {
         public event EventHandler NewBudgetSectionCreated;
+
+        private IDataManager _dataManager;
+        private Budget _currentBudget;
 
         private ObservableCollection<BudgetSection> _budgetSections;
         public ObservableCollection<BudgetSection> BudgetSections
@@ -25,6 +30,17 @@ namespace Costscape.ViewModels
                 NotifyChanged();
             }
         }
+
+        public string BudgetName
+        {
+            get { return _currentBudget.Name; }
+            set
+            {
+                _currentBudget.Name = value;
+                NotifyChanged();
+            }
+        }
+
 
         private BudgetSection _newBudgetSection;
         public BudgetSection NewBudgetSection
@@ -95,10 +111,26 @@ namespace Costscape.ViewModels
             get { return _addNewSectionCommand; }
         }
 
-        public BudgetViewModel()
+        private ICommand _valueUpdatedCommand;
+        public ICommand ValueUpdatedCommand
         {
-            _addNewItemCommand = new RelayCommand<BudgetSection>(AddNewItem);
-            _addNewSectionCommand = new RelayCommand(AddNewSection);
+            get { return _valueUpdatedCommand; }
+        }
+
+        private ICommand _saveValueCommand;
+        public ICommand SaveValueCommand
+        {
+            get { return _saveValueCommand; }
+        }
+
+        public BudgetViewModel(IDataManager dataManager)
+        {
+            _dataManager = dataManager;
+
+            _addNewItemCommand = new AsyncRelayCommand<BudgetSection>(AddNewItem);
+            _addNewSectionCommand = new AsyncRelayCommand(AddNewSection);
+            _valueUpdatedCommand = new RelayCommand<BudgetItem>(ValueUpdated) { IsEnabled = true };
+            _saveValueCommand = new AsyncRelayCommand<BudgetItem>(SaveValue);
 
             InitialBudget = new TotalData() { Title = "Initial Budget", Value = 5000, ValueConverted = (decimal)(5000.0 / 2.20) };
             MoneyLeft = new TotalData() { Title = "Money Left" };
@@ -109,21 +141,51 @@ namespace Costscape.ViewModels
             TotalCollection.Add(Totals);
         }
 
-        private void AddNewSection(object obj)
+        public async override Task LoadData(object arg)
+        {
+            _currentBudget = arg as Budget;
+
+            await _dataManager.GetBudgetSections(_currentBudget);
+
+            if (_currentBudget.Sections != null)
+                BudgetSections = new ObservableCollection<BudgetSection>(_currentBudget.Sections);
+
+            Recalculate();
+        }
+
+        private void ValueUpdated(BudgetItem obj)
+        {
+            Recalculate();
+        }
+
+        private async Task SaveValue(BudgetItem arg)
+        {
+            if (arg.Updated)
+            {
+                await _dataManager.UpdateObject(arg);
+                arg.Updated = false;
+            }
+        }
+
+        private async Task AddNewSection(object obj)
         {
             if (BudgetSections == null)
                 BudgetSections = new ObservableCollection<BudgetSection>();
 
             NewBudgetSection.SectionType = BudgetSectionType.Credit;
-            BudgetSections.Add(NewBudgetSection);
+            var section = NewBudgetSection;
+            NewBudgetSection = null;
+            section = await _dataManager.AddSectionToBudget(_currentBudget, section);
+            
+            BudgetSections.Add(section);
 
             if (NewBudgetSectionCreated != null)
                 NewBudgetSectionCreated(this, new EventArgs());
         }
 
-        private void AddNewItem(BudgetSection obj)
+        private async Task AddNewItem(BudgetSection obj)
         {
-            obj.Add(new BudgetItem(OnValueChanged) { Title = "Item", Value = 0, ValueConverted = 0 });
+            await _dataManager.AddItemToSection(obj, new BudgetItem() { Title = "Item", Value = 0 });
             Recalculate();
         }
 
@@ -134,17 +196,16 @@ namespace Costscape.ViewModels
 
         private void Recalculate()
         {
+            if (BudgetSections == null) return;
+
             foreach (var section in BudgetSections)
             {
                 section.RecalculateTotals();
             }
 
             var total = BudgetSections.Sum(o => o.SectionType == BudgetSectionType.Debit ? o.Total * -1 : o.Total);
-            var totalConverted = BudgetSections.Sum(o => o.SectionType == BudgetSectionType.Debit ? o.TotalConverted * -1 : o.TotalConverted);
             MoneyLeft.Value = InitialBudget.Value - total;
-            MoneyLeft.ValueConverted = InitialBudget.ValueConverted - totalConverted;
             Totals.Value = total;
-            Totals.ValueConverted = totalConverted;
         }
     }
 }

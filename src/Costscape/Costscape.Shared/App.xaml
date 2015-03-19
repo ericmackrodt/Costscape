@@ -8,6 +8,47 @@
         <ResourceDictionary>
             <local:ViewModelLocator x:Key="ViewModels" />
             
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="ThemeDefaultColor">#428F9C</Color>
+                    <Color x:Key="ThemeSecondaryColor">#103038</Color>
+                    <Color x:Key="DefaultBackgroundColor">#FFD2C9BF</Color>
+                    <Color x:Key="SecondaryBackgroundColor">#C4B6AB</Color>
+                    <Color x:Key="DefaultTextColor">#FFFFFF</Color>
+                    <Color x:Key="SecondaryTextColor">#000000</Color>
+                    
+                    <SolidColorBrush x:Key="MainPageBudgetListBackground" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="MainPageBudgetListForeground" Color="{ThemeResource DefaultTextColor}" />
+                    <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    
+                    <SolidColorBrush x:Key="SectionHeaderBackgroundBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="SectionHeaderForegroundBrush" Color="{ThemeResource DefaultTextColor}" />
+                    <SolidColorBrush x:Key="SectionHeaderButtonPressedBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="SectionHeaderButtonPressedForegroundBrush" Color="{ThemeResource DefaultTextColor}" />
+
+                    <SolidColorBrush x:Key="HeaderCellBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="CellBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="CellFocusForegroundBrush" Color="{ThemeResource SecondaryTextColor}" />
+
+                    <!--Default Brushes-->
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource DefaultBackgroundColor}" />
+                    <SolidColorBrush x:Key="DefaultTextForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
+                    
+                    <!--AppBar-->
+                    <SolidColorBrush x:Key="AppBarBackgroundThemeBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
+                    <SolidColorBrush x:Key="AppBarItemForegroundThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <Style TargetType="CommandBar">
+                        <Setter Property="Background" Value="{ThemeResource AppBarBackgroundThemeBrush}" />
+                        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
+                    </Style>
+                    
+                    <!--TextBlocks-->
+                    <Style x:Key="DefaultTextBlock" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="20" />
+                        <Setter Property="Foreground" Value="{ThemeResource DefaultTextForegroundThemeBrush}" />
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/PlatformDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>

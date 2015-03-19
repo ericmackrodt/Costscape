@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:Costscape.Common.Behaviors"
-    xmlns:common="using:Costscape.Common"
+    xmlns:converters="using:Costscape.Common.Converters"
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
     xmlns:telerikCore="using:Telerik.Core"
     x:Name="BudgetPageElement"
@@ -16,75 +16,229 @@
     DataContext="{Binding Path=BudgetViewModel, Source={StaticResource ViewModels}}">
 
     <Page.Resources>
-        <common:DecimalConverter x:Key="Decimal" />
-        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#696969"/>
-        <SolidColorBrush x:Key="ItemsBackgroundBrush" Color="#A9A9A9"/>
-        <SolidColorBrush x:Key="StackPanelBackgroundBrush" Color="Transparent"/>
+        <x:Double x:Key="ItemNamePercentage">0.7</x:Double>
+        <x:Double x:Key="ItemValuePercentage">0.3</x:Double>
+        <x:Double x:Key="ItemValueConvertedPercentage">0.3</x:Double>
 
-        <Style x:Key="TextBlockHeader" TargetType="TextBlock">
+        <converters:DecimalConverter x:Key="Decimal" />
+
+        <Style x:Key="SectionHeaderButton" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource SectionHeaderBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SectionHeaderForegroundBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily" Value="{ThemeResource PhoneFontFamilyNormal}"/>
+            <Setter Property="FontWeight" Value="{ThemeResource PhoneButtonFontWeight}"/>
+            <Setter Property="FontSize" Value="{ThemeResource TextStyleLargeFontSize}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Grid" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="Pressed" To="PointerOver">
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Grid"/>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="PointerOver" To="Normal">
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Grid"/>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="Pressed" To="Normal">
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="Grid"/>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver"/>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="Grid"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SectionHeaderButtonPressedForegroundBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SectionHeaderButtonPressedBackgroundBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonDisabledBorderThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonDisabledBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="0">
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TextBoxCell" TargetType="TextBox">
+            <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
+            <Setter Property="Foreground" Value="{ThemeResource DefaultTextForegroundThemeBrush}"/>
+            <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextSelectionHighlightColorThemeBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CellBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderThemeBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="{ThemeResource PhoneFontFamilyNormal}"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+            <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="BorderElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="BorderElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledBorderThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="PlaceholderTextContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="HeaderContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledHeaderForegroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="{ThemeResource TextControlBorderThemeOpacity}" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="BorderElement"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CellFocusForegroundBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="BorderElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CellFocusForegroundBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PlaceholderTextContentPresenter"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="BorderElement">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxFocusedBackgroundThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="BorderElement" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Row="1"/>
+                            <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Margin="{ThemeResource TextControlHeaderMarginThemeThickness}" Grid.Row="0" Style="{StaticResource HeaderContentPresenterStyle}"/>
+                            <ScrollViewer x:Name="ContentElement" AutomationProperties.AccessibilityView="Raw" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" IsTabStop="False" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" Margin="{TemplateBinding BorderThickness}" MinHeight="{ThemeResource TextControlThemeMinHeight}" Padding="{TemplateBinding Padding}" Grid.Row="1" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="Disabled"/>
+                            <ContentControl x:Name="PlaceholderTextContentPresenter" Content="{TemplateBinding PlaceholderText}" Foreground="{ThemeResource TextBoxPlaceholderTextThemeBrush}" FontSize="{ThemeResource ContentControlFontSize}" IsTabStop="False" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SectionHeaderBorder" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="TextBlockCell" TargetType="TextBlock" BasedOn="{StaticResource DefaultTextBlock}">
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-            <Setter Property="FontSize" Value="16" />
         </Style>
 
         <Style x:Key="BorderHeader" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource HeaderCellBackgroundBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <Style x:Key="TextBlockCell" TargetType="TextBlock">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-            <Setter Property="FontSize" Value="16"/>
         </Style>
 
         <Style x:Key="BorderCell" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource ItemsBackgroundBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource CellBackgroundBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-        
-        <Style x:Key="TextBoxCell" TargetType="TextBox">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Background" Value="{StaticResource ItemsBackgroundBrush}" />
-            <Setter Property="Foreground" Value="#FFFFFF" />
         </Style>
 
         <DataTemplate x:Key="DefaultItemDetailTemplate">
-            <Grid HorizontalAlignment="Left">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="0">
+                <Border Style="{StaticResource BorderCell}">
+                    <TextBox Text="{Binding Title, Mode=TwoWay}" Style="{StaticResource TextBoxCell}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding Path=DataContext.SaveValueCommand, ElementName=BudgetPageElement}" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
+                <Border Style="{StaticResource BorderCell}">
+                    <TextBox InputScope="Number" TextAlignment="Right" Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxUpdateBehavior KeyUpCommand="{Binding Path=DataContext.ValueUpdatedCommand, ElementName=BudgetPageElement}" LostFocusCommand="{Binding Path=DataContext.SaveValueCommand, ElementName=BudgetPageElement}" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
 
-                <!--<Border Background="{StaticResource ItemsBackgroundBrush}" />-->
+        <DataTemplate x:Key="DefaultTotalTemplate">
+            <StackPanel Orientation="Horizontal" 
+                        Margin="0">
+                <Border Style="{StaticResource BorderHeader}">
+                    <TextBlock Text="{Binding Title}" Style="{StaticResource TextBlockCell}" />
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Background="{StaticResource StackPanelBackgroundBrush}" HorizontalAlignment="Left">
-                    <Border Style="{StaticResource BorderCell}">
-                        <TextBlock Text="{Binding Title}" Style="{StaticResource TextBlockCell}" />
-                        <i:Interaction.Behaviors>
-                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.6" />
-                        </i:Interaction.Behaviors>
-                    </Border>
-                    <Border Style="{StaticResource BorderCell}">
-                        <TextBox InputScope="Number" Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
-                        <!--<TextBlock Text="{Binding Value}" Style="{StaticResource TextBlockCell}" />-->
-                        <i:Interaction.Behaviors>
-                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                        </i:Interaction.Behaviors>
-                    </Border>
-                    <Border Style="{StaticResource BorderCell}">
-                        <TextBox InputScope="Number" Text="{Binding ValueConverted, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}" />
-                        <!--<TextBlock Text="{Binding ValueConverted}" Style="{StaticResource TextBlockCell}" />-->
-                        <i:Interaction.Behaviors>
-                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                        </i:Interaction.Behaviors>
-                    </Border>
-                </StackPanel>
-            </Grid>
+                <Border Style="{StaticResource BorderHeader}">
+                    <TextBlock Text="{Binding Value, Converter={StaticResource Decimal}}" Style="{StaticResource TextBlockCell}" />
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
+            </StackPanel>
         </DataTemplate>
 
         <CollectionViewSource x:Key="Lists" Source="{Binding BudgetSections}" />
-        
+
         <Flyout x:Key="AddSectionFlyout" x:Name="AddSectionFlyout" Closed="AddSectionFlyout_Closed">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Add new section" />
@@ -106,93 +260,95 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="{StaticResource StackPanelBackgroundBrush}" HorizontalAlignment="Left">
-            <Border Style="{StaticResource BorderHeader}">
-                <TextBlock Text="Item Title" Style="{StaticResource TextBlockHeader}" />
-                <i:Interaction.Behaviors>
-                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.6" />
-                </i:Interaction.Behaviors>
-            </Border>
+        <Border Grid.Row="0" Background="{ThemeResource PageHeaderBackgroundBrush}"
+                Padding="10">
+            <TextBlock Text="{Binding BudgetName}" Style="{ThemeResource DefaultTextBlock}" />
+        </Border>
 
-            <Border Style="{StaticResource BorderHeader}">
-                <TextBlock Text="BRL$" Style="{StaticResource TextBlockHeader}" />
-                <i:Interaction.Behaviors>
-                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                </i:Interaction.Behaviors>
-            </Border>
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="1,0">
+            <!--Grid Header-->
+            <StackPanel Orientation="Horizontal" 
+                        Margin="0,1,0,0">
+                <Border Style="{StaticResource BorderHeader}">
+                    <TextBlock Text="Item Title" Style="{StaticResource TextBlockCell}" />
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
 
-            <Border Style="{StaticResource BorderHeader}">
-                <TextBlock Text="AUD$" Style="{StaticResource TextBlockHeader}" />
-                <i:Interaction.Behaviors>
-                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                </i:Interaction.Behaviors>
-            </Border>
-        </StackPanel>
-        
-        <telerikPrimitives:RadDataBoundListBox Grid.Row="1" ItemsSource="{Binding BudgetSections}"
+                <Border Style="{StaticResource BorderHeader}">
+                    <TextBlock Text="BRL$" Style="{StaticResource TextBlockCell}" />
+                    <i:Interaction.Behaviors>
+                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                    </i:Interaction.Behaviors>
+                </Border>
+            </StackPanel>
+
+            <!--Grid Data-->
+            <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding BudgetSections}"
                                                ItemAnimationMode="PlayAll">
-            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
-                    <telerikCore:RadFadeAnimation.Easing>
-                        <CubicEase EasingMode="EaseOut"/>
-                    </telerikCore:RadFadeAnimation.Easing>
-                </telerikCore:RadFadeAnimation>
-            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-            <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Background="Blue">
-                                <TextBlock Text="{Binding Name}" Foreground="White" />
-                            </Border>
-                            <Button Grid.Column="1" Content="+" Command="{Binding Path=DataContext.AddNewItemCommand, ElementName=BudgetPageElement}" CommandParameter="{Binding}" />
-                        </Grid>
+                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                        <telerikCore:RadFadeAnimation.Easing>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </telerikCore:RadFadeAnimation.Easing>
+                    </telerikCore:RadFadeAnimation>
+                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Grid VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource SectionHeaderBorder}" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource TextBlockCell}" />
+                                </Border>
+                                <Button Grid.Column="1"
+                                        VerticalAlignment="Top"
+                                        Style="{StaticResource SectionHeaderButton}"
+                                        Command="{Binding Path=DataContext.AddNewItemCommand, ElementName=BudgetPageElement}" CommandParameter="{Binding}">
+                                    <TextBlock Text="+" Style="{StaticResource TextBlockCell}" />
+                                </Button>
+                            </Grid>
 
-                        <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
+                            <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
                                                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                                <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
-                                    <telerikCore:RadFadeAnimation.Easing>
-                                        <CubicEase EasingMode="EaseOut"/>
-                                    </telerikCore:RadFadeAnimation.Easing>
-                                </telerikCore:RadFadeAnimation>
-                            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                        </telerikPrimitives:RadDataBoundListBox>                        
-                        
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Background="{StaticResource StackPanelBackgroundBrush}" HorizontalAlignment="Left">
-                            <Border Style="{StaticResource BorderCell}">
-                                <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
-                                <i:Interaction.Behaviors>
-                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.6" />
-                                </i:Interaction.Behaviors>
-                            </Border>
-                            <Border Style="{StaticResource BorderCell}">
-                                <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
-                                <i:Interaction.Behaviors>
-                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                                </i:Interaction.Behaviors>
-                            </Border>
-                            <Border Style="{StaticResource BorderCell}">
-                                <TextBlock Text="{Binding TotalConverted}" Style="{StaticResource TextBlockCell}" />
-                                <i:Interaction.Behaviors>
-                                    <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="0.2" />
-                                </i:Interaction.Behaviors>
-                            </Border>
+                                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                                        <telerikCore:RadFadeAnimation.Easing>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </telerikCore:RadFadeAnimation.Easing>
+                                    </telerikCore:RadFadeAnimation>
+                                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                            </telerikPrimitives:RadDataBoundListBox>
+
+                            <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Left">
+                                <Border Style="{StaticResource BorderCell}">
+                                    <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                                    </i:Interaction.Behaviors>
+                                </Border>
+                                <Border Style="{StaticResource BorderCell}">
+                                    <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                                    </i:Interaction.Behaviors>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-            <telerikPrimitives:RadDataBoundListBox.ListFooterContent>
-                <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}" />
-            </telerikPrimitives:RadDataBoundListBox.ListFooterContent>
-        </telerikPrimitives:RadDataBoundListBox>
+                    </DataTemplate>
+                </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                <telerikPrimitives:RadDataBoundListBox.ListFooterContent>
+                    <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultTotalTemplate}" />
+                </telerikPrimitives:RadDataBoundListBox.ListFooterContent>
+            </telerikPrimitives:RadDataBoundListBox>
+        </StackPanel>
     </Grid>
-    
+
     <Page.BottomAppBar>
         <CommandBar IsSticky="False" x:Name="AppBar">
             <CommandBar.PrimaryCommands>
