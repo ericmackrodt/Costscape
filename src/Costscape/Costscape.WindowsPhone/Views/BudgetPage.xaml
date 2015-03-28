@@ -192,25 +192,23 @@
             <Setter Property="Background" Value="{ThemeResource CellBackgroundBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
+        
+        <Style x:Key="BorderTotal" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource TotalCellBackgroundBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
         <DataTemplate x:Key="DefaultItemDetailTemplate">
             <StackPanel Orientation="Horizontal" Margin="0">
                 <Border Style="{StaticResource BorderCell}">
-                    <TextBox Text="{Binding Title, Mode=TwoWay}" Style="{StaticResource TextBoxCell}">
-                        <i:Interaction.Behaviors>
-                            <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding Path=DataContext.SaveValueCommand, ElementName=BudgetPageElement}" />
-                        </i:Interaction.Behaviors>
-                    </TextBox>
+                    <TextBlock Text="{Binding Title}" 
+                             Style="{StaticResource TextBlockCell}" />
                     <i:Interaction.Behaviors>
                         <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
                     </i:Interaction.Behaviors>
                 </Border>
                 <Border Style="{StaticResource BorderCell}">
-                    <TextBox InputScope="Number" TextAlignment="Right" Text="{Binding Value, Mode=TwoWay, Converter={StaticResource Decimal}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxCell}">
-                        <i:Interaction.Behaviors>
-                            <behaviors:TextBoxUpdateBehavior KeyUpCommand="{Binding Path=DataContext.ValueUpdatedCommand, ElementName=BudgetPageElement}" LostFocusCommand="{Binding Path=DataContext.SaveValueCommand, ElementName=BudgetPageElement}" />
-                        </i:Interaction.Behaviors>
-                    </TextBox>
+                    <TextBlock TextAlignment="Right" Text="{Binding Value, Converter={StaticResource Decimal}}" Style="{StaticResource TextBlockCell}" />
                     <i:Interaction.Behaviors>
                         <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
                     </i:Interaction.Behaviors>
@@ -243,8 +241,15 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Add new section" />
                 <TextBlock Text="Section Name:" />
-                <TextBox Text="{Binding Path=NewBudgetSection.Name, Mode=TwoWay}" />
+                <TextBox Header="Section Name" Text="{Binding Path=NewBudgetSection.Name, Mode=TwoWay}" />
                 <Button Content="Add" Command="{Binding AddNewSectionCommand}" />
+            </StackPanel>
+        </Flyout>
+        
+        <Flyout x:Key="ItemFlyout" x:Name="ItemFlyout">
+            <StackPanel Orientation="Vertical">
+                <TextBox Header="ItemName" />
+                <TextBox Header="Value" />
             </StackPanel>
         </Flyout>
     </Page.Resources>
@@ -265,7 +270,7 @@
             <TextBlock Text="{Binding BudgetName}" Style="{ThemeResource DefaultTextBlock}" />
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="1,0">
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="1,5,1,0">
             <!--Grid Header-->
             <StackPanel Orientation="Horizontal" 
                         Margin="0,1,0,0">
@@ -308,7 +313,7 @@
                                 <Button Grid.Column="1"
                                         VerticalAlignment="Top"
                                         Style="{StaticResource SectionHeaderButton}"
-                                        Command="{Binding Path=DataContext.AddNewItemCommand, ElementName=BudgetPageElement}" CommandParameter="{Binding}">
+                                        Flyout="{StaticResource ItemFlyout}">
                                     <TextBlock Text="+" Style="{StaticResource TextBlockCell}" />
                                 </Button>
                             </Grid>

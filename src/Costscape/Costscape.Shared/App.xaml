@@ -16,6 +16,7 @@
                     <Color x:Key="SecondaryBackgroundColor">#C4B6AB</Color>
                     <Color x:Key="DefaultTextColor">#FFFFFF</Color>
                     <Color x:Key="SecondaryTextColor">#000000</Color>
+                    <Color x:Key="TextBackgroundColor">#FFFFFF</Color>
                     
                     <SolidColorBrush x:Key="MainPageBudgetListBackground" Color="{ThemeResource ThemeDefaultColor}" />
                     <SolidColorBrush x:Key="MainPageBudgetListForeground" Color="{ThemeResource DefaultTextColor}" />
@@ -26,14 +27,25 @@
                     <SolidColorBrush x:Key="SectionHeaderButtonPressedBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
                     <SolidColorBrush x:Key="SectionHeaderButtonPressedForegroundBrush" Color="{ThemeResource DefaultTextColor}" />
 
-                    <SolidColorBrush x:Key="HeaderCellBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="HeaderCellBackgroundBrush" Color="{ThemeResource ThemeDefaultColor}" />
                     <SolidColorBrush x:Key="CellBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
                     <SolidColorBrush x:Key="CellFocusForegroundBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="TotalCellBackgroundBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
 
                     <!--Default Brushes-->
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource DefaultBackgroundColor}" />
                     <SolidColorBrush x:Key="DefaultTextForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
-                    
+                    <!--Default Flyout-->
+                    <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
+                    <!--Default TextBlocks-->
+                    <SolidColorBrush x:Key="TextBoxBackgroundThemeBrush" Color="{ThemeResource TextBackgroundColor}" />
+                    <SolidColorBrush x:Key="TextBoxBorderThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="TextBoxFocusedBackgroundThemeBrush" Color="{ThemeResource TextBackgroundColor}" />
+                    <SolidColorBrush x:Key="TextBoxForegroundHeaderThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="TextBoxForegroundThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="TextSelectionHighlightColorThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="TextBoxPlaceholderTextThemeBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
+
                     <!--AppBar-->
                     <SolidColorBrush x:Key="AppBarBackgroundThemeBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
                     <SolidColorBrush x:Key="AppBarItemForegroundThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
