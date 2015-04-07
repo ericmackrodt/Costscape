@@ -1,4 +1,5 @@
-﻿using MVVMBasic;
+﻿using Costscape.Common.Enums;
+using MVVMBasic;
 using SQLite.Net.Attributes;
 using SQLiteNetExtensions.Attributes;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 namespace Costscape.Models
 {
     [Table("Budgets")]
-    public class Budget : BaseViewModel
+    public class Budget : ObservableModel
     {
         private int _budgetID;
         [PrimaryKey, AutoIncrement]
@@ -34,29 +35,49 @@ namespace Costscape.Models
             }
         }
 
-        [Ignore]
-        public override bool IsBusy
+        private DateTime _lastUpdated;
+        public DateTime LastUpdated
         {
-            get
-            {
-                return base.IsBusy;
-            }
+            get { return _lastUpdated; }
             set
             {
-                base.IsBusy = value;
+                _lastUpdated = value;
+                NotifyChanged();
             }
         }
 
-        [Ignore]
-        public override bool IsDataLoaded
+        private bool _hasInitialBudget;
+        [NotNull, Default(true, false)]
+        public bool HasInitialBudget
         {
-            get
-            {
-                return base.IsDataLoaded;
-            }
+            get { return _hasInitialBudget; }
             set
             {
-                base.IsDataLoaded = value;
+                _hasInitialBudget = value;
+                NotifyChanged();
+            }
+        }
+
+        private decimal _initialBudget;
+        public decimal InitialBudget
+        {
+            get { return _initialBudget; }
+            set
+            {
+                _initialBudget = value;
+                NotifyChanged();
+            }
+        }
+
+        private BudgetBaseCurrency _baseCurrency;
+        [NotNull, Default(value: BudgetBaseCurrency.USD)]
+        public BudgetBaseCurrency BaseCurrency
+        {
+            get { return _baseCurrency; }
+            set
+            {
+                _baseCurrency = value;
+                NotifyChanged();
             }
         }
 

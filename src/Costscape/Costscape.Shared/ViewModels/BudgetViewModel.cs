@@ -10,14 +10,19 @@ using System.Linq;
 using Costscape.Common.Enums;
 using Costscape.Common;
 using System.Threading.Tasks;
+using Broadcaster;
+using Costscape.Common.BroadcasterEvents;
 
 namespace Costscape.ViewModels
 {
     public class BudgetViewModel : BaseViewModel
     {
         public event EventHandler NewBudgetSectionCreated;
+        public event EventHandler NewBudgetItemCreated;
+        public event EventHandler BudgetItemEdited;
 
         private IDataManager _dataManager;
+        private IBroadcaster _broadcaster;
         private Budget _currentBudget;
 
         private ObservableCollection<BudgetSection> _budgetSections;
@@ -31,16 +36,10 @@ namespace Costscape.ViewModels
             }
         }
 
-        public string BudgetName
+        public Budget CurrentBudget
         {
-            get { return _currentBudget.Name; }
-            set
-            {
-                _currentBudget.Name = value;
-                NotifyChanged();
-            }
+            get { return _currentBudget; }
         }
-
 
         private BudgetSection _newBudgetSection;
         public BudgetSection NewBudgetSection
@@ -55,6 +54,45 @@ namespace Costscape.ViewModels
             set
             {
                 _newBudgetSection = value;
+                NotifyChanged();
+            }
+        }
+
+        private BudgetItem _newBudgetItem;
+        public BudgetItem NewBudgetItem
+        {
+            get
+            {
+                if (_newBudgetItem == null)
+                    _newBudgetItem = new BudgetItem();
+
+                return _newBudgetItem;
+            }
+            set
+            {
+                _newBudgetItem = value;
+                NotifyChanged();
+            }
+        }
+
+        private BudgetItem _selectedBudgetItem;
+        public BudgetItem SelectedBudgetItem
+        {
+            get { return _selectedBudgetItem; }
+            set
+            {
+                _selectedBudgetItem = value;
+                NotifyChanged();
+            }
+        }
+
+        private BudgetSection _selectedBudgetSection;
+        public BudgetSection SelectedBudgetSection
+        {
+            get { return _selectedBudgetSection; }
+            set
+            {
+                _selectedBudgetSection = value;
                 NotifyChanged();
             }
         }
@@ -85,7 +123,11 @@ namespace Costscape.ViewModels
         public ObservableCollection<TotalData> TotalCollection
         {
             get { return _totalCollection; }
-            set { _totalCollection = value; }
+            set
+            {
+                _totalCollection = value;
+                NotifyChanged();
+            }
         }
 
         private TotalData _initialBudget;
@@ -123,33 +165,43 @@ namespace Costscape.ViewModels
             get { return _saveValueCommand; }
         }
 
-        public BudgetViewModel(IDataManager dataManager)
+        public BudgetViewModel(IDataManager dataManager, IBroadcaster broadcaster)
         {
             _dataManager = dataManager;
+            _broadcaster = broadcaster;
 
-            _addNewItemCommand = new AsyncRelayCommand<BudgetSection>(AddNewItem);
-            _addNewSectionCommand = new AsyncRelayCommand(AddNewSection);
+            _addNewItemCommand = new RelayCommandAsync<BudgetSection>(AddNewItem);
+            _addNewSectionCommand = new RelayCommandAsync(AddNewSection);
             _valueUpdatedCommand = new RelayCommand<BudgetItem>(ValueUpdated) { IsEnabled = true };
-            _saveValueCommand = new AsyncRelayCommand<BudgetItem>(SaveValue);
-
-            InitialBudget = new TotalData() { Title = "Initial Budget", Value = 5000, ValueConverted = (decimal)(5000.0 / 2.20) };
-            MoneyLeft = new TotalData() { Title = "Money Left" };
-            Totals = new TotalData() { Title = "Total" };
-            TotalCollection = new ObservableCollection<TotalData>();
-            TotalCollection.Add(InitialBudget);
-            TotalCollection.Add(MoneyLeft);
-            TotalCollection.Add(Totals);
+            _saveValueCommand = new RelayCommandAsync<BudgetItem>(SaveValue);
         }
 
         public async override Task LoadData(object arg)
         {
             _currentBudget = arg as Budget;
 
+            _currentBudget.LastUpdated = DateTime.Now;
+            await _dataManager.UpdateObject(_currentBudget);
+            _broadcaster.Event<BudgetUpdatedEvent>().Broadcast(_currentBudget);
+
             await _dataManager.GetBudgetSections(_currentBudget);
 
             if (_currentBudget.Sections != null)
                 BudgetSections = new ObservableCollection<BudgetSection>(_currentBudget.Sections);
 
+            TotalCollection = new ObservableCollection<TotalData>();
+
+            if (_currentBudget.HasInitialBudget)
+            {
+                InitialBudget = new TotalData() { Title = "Initial Budget", Value = _currentBudget.InitialBudget, ValueConverted = (decimal)(_currentBudget.InitialBudget / 2.20m) };
+                TotalCollection.Add(InitialBudget);
+
+                MoneyLeft = new TotalData() { Title = "Money Left" };
+                TotalCollection.Add(MoneyLeft);
+            }
+            
+            Totals = new TotalData() { Title = "Total" };            
+            TotalCollection.Add(Totals);
             Recalculate();
         }
 
@@ -185,8 +237,15 @@ namespace Costscape.ViewModels
 
         private async Task AddNewItem(BudgetSection obj)
         {
-            await _dataManager.AddItemToSection(obj, new BudgetItem() { Title = "Item", Value = 0 });
+            var item = NewBudgetItem;
+            var section = SelectedBudgetSection;
+            NewBudgetItem = null;
+            SelectedBudgetSection = null;
+            await _dataManager.AddItemToSection(section, item);
             Recalculate();
+
+            if (NewBudgetItemCreated != null)
+                NewBudgetItemCreated(this, new EventArgs());
         }
 
         private void OnValueChanged(BudgetItem obj)
@@ -204,7 +263,10 @@ namespace Costscape.ViewModels
             }
 
             var total = BudgetSections.Sum(o => o.SectionType == BudgetSectionType.Debit ? o.Total * -1 : o.Total);
-            MoneyLeft.Value = InitialBudget.Value - total;
+
+            if (_currentBudget.HasInitialBudget)
+                MoneyLeft.Value = InitialBudget.Value - total;
+
             Totals.Value = total;
         }
     }

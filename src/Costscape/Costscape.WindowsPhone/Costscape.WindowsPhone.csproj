@@ -109,6 +109,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\BudgetPageResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Resources\Controls\Jumplist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -131,8 +136,9 @@
     <Reference Include="Broadcaster">
       <HintPath>..\..\packages\Broadcaster.1.0.1.0\lib\portable-net45+sl50+win+wpa81+wp80\Broadcaster.dll</HintPath>
     </Reference>
-    <Reference Include="MVVMBasic">
-      <HintPath>..\..\packages\MVVMBasic.1.0.0.1\lib\portable-net45+win+wpa81+wp80\MVVMBasic.dll</HintPath>
+    <Reference Include="MVVMBasic, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\MVVMBasic.1.1.0.2\lib\portable-net45+win+wpa81+wp80\MVVMBasic.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>

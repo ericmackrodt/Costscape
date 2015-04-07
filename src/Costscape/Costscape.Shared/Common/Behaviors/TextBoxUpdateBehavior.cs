@@ -30,7 +30,7 @@ namespace Costscape.Common.Behaviors
         // Using a DependencyProperty as the backing store for KeyUpCommand.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty KeyUpCommandProperty =
             DependencyProperty.Register("KeyUpCommand", typeof(ICommand), typeof(TextBoxUpdateBehavior), new PropertyMetadata(default(ICommand)));
-
+        
         public DependencyObject AssociatedObject { get; set; }
 
         public TextBox TextBoxObject { get; set; }

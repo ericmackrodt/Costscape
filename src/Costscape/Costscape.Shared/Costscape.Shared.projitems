@@ -17,9 +17,11 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\TextBoxUpdateBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\WindowDimensionBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\BroadcasterEvents\BudgetUpdatedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\DecimalConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\ObservableObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\DataManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Enums\BudgetBaseCurrency.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Enums\BudgetSectionType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\IDataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BudgetItem.cs" />
@@ -38,5 +40,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
   </ItemGroup>
 </Project>

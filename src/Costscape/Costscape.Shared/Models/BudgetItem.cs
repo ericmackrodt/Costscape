@@ -9,7 +9,7 @@ using System.Text;
 namespace Costscape.Models
 {
     [Table("BudgetItems")]
-    public class BudgetItem : BaseViewModel
+    public class BudgetItem : ObservableModel
     {
         [Ignore]
         public bool Updated { get; set; }
@@ -63,33 +63,5 @@ namespace Costscape.Models
 
         [ManyToOne]
         public BudgetSection Section { get; set; }
-
-        [Ignore]
-        public override bool IsBusy
-        {
-            get
-            {
-                return base.IsBusy;
-            }
-            set
-            {
-                base.IsBusy = value;
-            }
-        }
-
-        [Ignore]
-        public override bool IsDataLoaded
-        {
-            get
-            {
-                return base.IsDataLoaded;
-            }
-            set
-            {
-                base.IsDataLoaded = value;
-            }
-        }
-
-        public BudgetItem() { }
     }
 }

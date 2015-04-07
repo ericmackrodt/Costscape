@@ -95,6 +95,8 @@ namespace Costscape.Views
             this.navigationHelper.OnNavigatedTo(e);
 
             ViewModel.NewBudgetSectionCreated += ViewModel_NewBudgetSectionCreated;
+            ViewModel.NewBudgetItemCreated += ViewModel_NewBudgetItemCreated;
+            ViewModel.BudgetItemEdited += ViewModel_BudgetItemEdited;
 
             var budget = e.Parameter as Budget;
 
@@ -108,6 +110,8 @@ namespace Costscape.Views
             this.navigationHelper.OnNavigatedFrom(e);
 
             ViewModel.NewBudgetSectionCreated -= ViewModel_NewBudgetSectionCreated;
+            ViewModel.NewBudgetItemCreated -= ViewModel_NewBudgetItemCreated;
+            ViewModel.BudgetItemEdited -= ViewModel_BudgetItemEdited;
         }
 
         #endregion
@@ -117,9 +121,45 @@ namespace Costscape.Views
             AddSectionFlyout.Hide();
         }
 
+        private void ViewModel_BudgetItemEdited(object sender, EventArgs e)
+        {
+            EditItemFlyout.Hide();
+        }
+
+        private void ViewModel_NewBudgetItemCreated(object sender, EventArgs e)
+        {
+            AddItemFlyout.Hide(); 
+        }
+
         private void AddSectionFlyout_Closed(object sender, object e)
         {
             ViewModel.NewBudgetSection = null;
+        }
+
+        private void RadDataBoundListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedBudgetItem = e.AddedItems.FirstOrDefault() as BudgetItem;
+            EditItemFlyout.ShowAt(this);
+        }
+
+        private void BtnAddItem_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = (sender as Button);
+            var section = (btn.DataContext as BudgetSection);
+            ViewModel.SelectedBudgetSection = section;
+            AddItemFlyout.ShowAt(this);
+        }
+
+        private void BtnCancelItemAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NewBudgetSection = null;
+            AddItemFlyout.Hide();
+        }
+
+        private void BtnCancelSectionAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NewBudgetItem = null;
+            AddSectionFlyout.Hide();
         }
     }
 }

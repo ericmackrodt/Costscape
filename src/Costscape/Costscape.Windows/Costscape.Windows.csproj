@@ -139,8 +139,9 @@
     <Reference Include="Broadcaster">
       <HintPath>..\..\packages\Broadcaster.1.0.1.0\lib\portable-net45+sl50+win+wpa81+wp80\Broadcaster.dll</HintPath>
     </Reference>
-    <Reference Include="MVVMBasic">
-      <HintPath>..\..\packages\MVVMBasic.1.0.0.1\lib\portable-net45+win+wpa81+wp80\MVVMBasic.dll</HintPath>
+    <Reference Include="MVVMBasic, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\MVVMBasic.1.1.0.2\lib\portable-net45+win+wpa81+wp80\MVVMBasic.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>

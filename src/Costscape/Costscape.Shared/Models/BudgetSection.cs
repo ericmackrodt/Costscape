@@ -16,7 +16,7 @@ using MVVMBasic;
 namespace Costscape.Models
 {
     [Table("BudgetSections")]
-    public class BudgetSection : BaseViewModel
+    public class BudgetSection : ObservableModel
     {
         private int _budgetSectionID;
         [PrimaryKey, AutoIncrement]
@@ -82,36 +82,6 @@ namespace Costscape.Models
                 _items = value;
                 NotifyChanged();
             }
-        }
-
-        [Ignore]
-        public override bool IsBusy
-        {
-            get
-            {
-                return base.IsBusy;
-            }
-            set
-            {
-                base.IsBusy = value;
-            }
-        }
-
-        [Ignore]
-        public override bool IsDataLoaded
-        {
-            get
-            {
-                return base.IsDataLoaded;
-            }
-            set
-            {
-                base.IsDataLoaded = value;
-            }
-        }
-
-        public BudgetSection()
-        {
         }
 
         public void Add(BudgetItem item)

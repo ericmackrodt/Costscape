@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Broadcaster;
 using Costscape.Common;
 using Costscape.ViewModels;
 using System;
@@ -16,6 +17,7 @@ namespace Costscape
             var containerBuilder = new ContainerBuilder();
 
             containerBuilder.RegisterType<DataManager>().As<IDataManager>();
+            containerBuilder.RegisterType<BroadcastContainer>().As<IBroadcaster>().SingleInstance();
 
             containerBuilder.RegisterType<MainViewModel>();
             containerBuilder.RegisterType<BudgetViewModel>();

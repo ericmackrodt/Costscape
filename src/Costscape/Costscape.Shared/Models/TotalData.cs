@@ -1,11 +1,12 @@
 ﻿using Costscape.Common;
+using MVVMBasic;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Costscape.Models
 {
-    public class TotalData : ObservableObject
+    public class TotalData : ObservableModel
     {
         private string _title;
         public string Title

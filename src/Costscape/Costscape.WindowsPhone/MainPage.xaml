@@ -11,9 +11,10 @@
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
     xmlns:telerikCore="using:Telerik.Core"
     mc:Ignorable="d"
+    RequestedTheme="Default"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Path=MainViewModel, Source={StaticResource ViewModels}}">
-    
+
     <Page.Resources>
         <DataTemplate x:Key="BudgetItemTemplate">
             <Border Margin="0,0,0,5" Background="{ThemeResource MainPageBudgetListBackground}"
@@ -23,35 +24,40 @@
                            Text="{Binding Name}" />
             </Border>
         </DataTemplate>
-        
+
         <Flyout x:Key="NewBudgetFlyout" x:Name="NewBudgetFlyout" Closed="NewBudgetFlyout_Closed">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Add new Budget" />
-                <TextBlock Text="Budget Name:" />
-                <TextBox Text="{Binding Path=NewBudget.Name, Mode=TwoWay}" />
+            <StackPanel Orientation="Vertical" Margin="12">
+                <TextBlock Text="Add new Budget" Style="{ThemeResource DefaultHeaderTextBlock}" />
+                <TextBox Header="Budget Name" Text="{Binding Path=NewBudget.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox x:Name="CkHasInitialBudget" x:Uid="HasInitialBudget" IsChecked="{Binding Path=NewBudget.HasInitialBudget, Mode=TwoWay}" />
+                <TextBox x:Uid="InitialBudget" 
+                         InputScope="Number"
+                         IsEnabled="{Binding Path=IsChecked, ElementName=CkHasInitialBudget}" 
+                         Text="{Binding Path=NewBudget.InitialBudget, Mode=TwoWay, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding InitialBudgetUpdateCommand}" />
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <Button Content="Add" Command="{Binding AddNewBudgetCommand}" />
             </StackPanel>
         </Flyout>
     </Page.Resources>
     <Grid>
-        <StackPanel>
-            <telerikPrimitives:RadDataBoundListBox x:Name="BudgetList" ItemsSource="{Binding Budgets}"
-                                                   Margin="20"
-                                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                   SelectionChanged="BudgetList_SelectionChanged"
-                                                   ItemTemplate="{StaticResource BudgetItemTemplate}">
-                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
-                        <telerikCore:RadFadeAnimation.Easing>
-                            <CubicEase EasingMode="EaseOut"/>
-                        </telerikCore:RadFadeAnimation.Easing>
-                    </telerikCore:RadFadeAnimation>
-                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-            </telerikPrimitives:RadDataBoundListBox>
-        </StackPanel>
+        <telerikPrimitives:RadDataBoundListBox x:Name="BudgetList" ItemsSource="{Binding Budgets}"
+                                                Margin="12,12,12,0"
+                                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                SelectionChanged="BudgetList_SelectionChanged"
+                                                ItemTemplate="{StaticResource BudgetItemTemplate}">
+            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                    <telerikCore:RadFadeAnimation.Easing>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </telerikCore:RadFadeAnimation.Easing>
+                </telerikCore:RadFadeAnimation>
+            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+        </telerikPrimitives:RadDataBoundListBox>
     </Grid>
-    
     <Page.BottomAppBar>
         <CommandBar IsSticky="True">
             <CommandBar.PrimaryCommands>
