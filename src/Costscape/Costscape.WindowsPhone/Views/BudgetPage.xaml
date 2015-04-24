@@ -22,10 +22,56 @@
                 <ResourceDictionary Source="../Resources/BudgetPageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <converters:BudgetTypeConverter x:Key="BudgetTypeConverter" />
+
+            <DataTemplate x:Key="DefaultItemDetailTemplate">
+                <StackPanel Orientation="Horizontal" Margin="0">
+                    <Grid Margin="0" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="BtnItem" 
+                                Grid.Column="0" 
+                                Content="..." 
+                                VerticalAlignment="Stretch"
+                                Style="{StaticResource ItemMenuButton}">
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Edit" />
+                                    <MenuFlyoutItem Text="Delete" />
+                                    <MenuFlyoutItem Text="Move to another section" />
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Border Grid.Column="1"
+                                x:Name="ItemNameBorder"
+                                Tapped="ItemNameBorder_Tapped"
+                                Style="{StaticResource BorderCell}">
+                            <TextBlock Text="{Binding Title}" 
+                                       Style="{StaticResource TextBlockCell}" />
+                        </Border>
+                        <i:Interaction.Behaviors>
+                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                        </i:Interaction.Behaviors>
+                    </Grid>
+                    <Border Style="{StaticResource BorderCell}">
+                        <TextBlock Text="{Binding Value, Converter={StaticResource DecimalConverter}}" Style="{StaticResource TextBlockNumberCell}" />
+                        <i:Interaction.Behaviors>
+                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                        </i:Interaction.Behaviors>
+                    </Border>
+                </StackPanel>
+            </DataTemplate>
+
             <Flyout x:Key="AddSectionFlyout" x:Name="AddSectionFlyout" Closed="AddSectionFlyout_Closed">
                 <StackPanel Orientation="Vertical" Margin="12">
                     <TextBlock Text="Add new section"  Style="{ThemeResource DefaultHeaderTextBlock}" />
                     <TextBox Header="Section Name" Text="{Binding Path=NewBudgetSection.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox Header="Section Type" SelectedIndex="{Binding Path=NewBudgetSection.SectionType, Mode=TwoWay, Converter={StaticResource BudgetTypeConverter}}">
+                        <ComboBoxItem Content="Debit" />
+                        <ComboBoxItem Content="Credit" />
+                    </ComboBox>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -39,9 +85,24 @@
 
             <Flyout x:Key="EditItemFlyout" x:Name="EditItemFlyout">
                 <StackPanel Orientation="Vertical" Margin="20">
-                    <TextBox Header="ItemName" Text="{Binding SelectedBudgetItem.Title, Mode=TwoWay}" />
-                    <TextBox Header="Value" Text="{Binding SelectedBudgetItem.Value, Mode=TwoWay, Converter={StaticResource DecimalConverter}}"/>
-                    <Button Content="Add" Command="{Binding AddNewItemCommand}" />
+                    <TextBlock Text="Edit Item"  Style="{ThemeResource DefaultHeaderTextBlock}" />
+                    <TextBox Header="Item Name" 
+                             Text="{Binding Path=SelectedBudgetItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Header="Value" 
+                             InputScope="Number"
+                             Text="{Binding Path=SelectedBudgetItem.Value, Mode=TwoWay, Converter={StaticResource DecimalConverter}}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding ValueUpdatedCommand}" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button HorizontalAlignment="Stretch" Grid.Column="0" Margin="0,0,6,0" Content="Save" Command="{Binding Path=UpdateItemCommand}" />
+                        <Button HorizontalAlignment="Stretch" Grid.Column="1" Margin="6,0,0,0" Content="Cancel" x:Name="BtnCancelItemEdit" Click="BtnCancelItemEdit_Click" />
+                    </Grid>
                 </StackPanel>
             </Flyout>
 
@@ -51,8 +112,14 @@
                         <TextBlock Text="Add new item in "  Style="{ThemeResource DefaultHeaderTextBlock}" />
                         <TextBlock Text="{Binding SelectedBudgetSection.Name}" Style="{ThemeResource DefaultHeaderTextBlock}" />
                     </StackPanel>
-                    <TextBox Header="ItemName" Text="{Binding Path=NewBudgetItem.Title, Mode=TwoWay}" />
-                    <TextBox Header="Value" Text="{Binding Path=NewBudgetItem.Value, Mode=TwoWay, Converter={StaticResource DecimalConverter}}" />
+                    <TextBox Header="ItemName" Text="{Binding Path=NewBudgetItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Header="Value" 
+                             InputScope="Number"
+                             Text="{Binding Path=NewBudgetItem.Value, Mode=TwoWay, Converter={StaticResource DecimalConverter}}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding ValueUpdatedCommand}" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
