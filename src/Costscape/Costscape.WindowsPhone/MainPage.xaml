@@ -39,7 +39,15 @@
                         <behaviors:TextBoxUpdateBehavior LostFocusCommand="{Binding InitialBudgetUpdateCommand}" />
                     </i:Interaction.Behaviors>
                 </TextBox>
-                <Button Content="Add" Command="{Binding AddNewBudgetCommand}" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button HorizontalAlignment="Stretch" Grid.Column="0" Margin="0,0,6,0" Content="Add" Command="{Binding Path=AddNewBudgetCommand}" />
+                    <Button HorizontalAlignment="Stretch" Grid.Column="1" Margin="6,0,0,0" Content="Cancel" x:Name="BtnCancelAddBudget" Click="BtnCancelAddBudget_Click" />
+                </Grid>
             </StackPanel>
         </Flyout>
     </Page.Resources>

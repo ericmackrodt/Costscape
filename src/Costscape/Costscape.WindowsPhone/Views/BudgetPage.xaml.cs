@@ -161,5 +161,17 @@ namespace Costscape.Views
             ViewModel.NewBudgetItem = null;
             AddSectionFlyout.Hide();
         }
+
+        private void BtnCancelItemEdit_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SelectedBudgetItem = null;
+            EditItemFlyout.Hide();
+        }
+
+        private void ItemNameBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.SelectedBudgetItem = (sender as Border).DataContext as BudgetItem;
+            EditItemFlyout.ShowAt(this);
+        }
     }
 }

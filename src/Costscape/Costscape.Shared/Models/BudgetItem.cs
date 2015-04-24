@@ -43,7 +43,7 @@ namespace Costscape.Models
         }
 
         private decimal _value;
-        [NotNull]
+        [NotNull, Default(true, 0)]
         public decimal Value
         {
             get { return _value; }

@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Behaviors\WindowDimensionBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\BroadcasterEvents\BudgetUpdatedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\BudgetTypeConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Converters\DecimalConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\DataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Enums\BudgetBaseCurrency.cs" />

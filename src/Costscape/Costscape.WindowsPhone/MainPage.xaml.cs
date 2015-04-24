@@ -78,5 +78,11 @@ namespace Costscape
         {
             ViewModel.NewBudget = null;
         }
+
+        private void BtnCancelAddBudget_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NewBudget = null;
+            NewBudgetFlyout.Hide();
+        }
     }
 }
