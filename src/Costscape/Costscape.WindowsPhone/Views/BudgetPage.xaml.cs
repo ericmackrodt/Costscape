@@ -170,8 +170,31 @@ namespace Costscape.Views
 
         private void ItemNameBorder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ViewModel.SelectedBudgetItem = (sender as Border).DataContext as BudgetItem;
+            EditItem((sender as Border).DataContext as BudgetItem);
+        }
+
+        private void MnEditItem_Click(object sender, RoutedEventArgs e)
+        {
+            EditItem((sender as MenuFlyoutItem).DataContext as BudgetItem);
+        }
+
+        private void EditItem(BudgetItem item)
+        {
+            ViewModel.SelectedBudgetItem = item;
             EditItemFlyout.ShowAt(this);
+        }
+
+        private void MnDeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (sender as MenuFlyoutItem).DataContext as BudgetItem;
+
+            if (ViewModel.RemoveItemCommand.CanExecute(item))
+                ViewModel.RemoveItemCommand.Execute(item);
+        }
+
+        private void MnMoveToAnotherSection_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

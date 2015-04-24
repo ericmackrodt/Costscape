@@ -84,5 +84,10 @@ namespace Costscape.Common
         {
             await _connection.InsertAsync(obj);
         }
+
+        public async Task RemoveObject(object obj)
+        {
+            await _connection.DeleteAsync(obj);
+        }
     }
 }

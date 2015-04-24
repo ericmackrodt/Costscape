@@ -38,9 +38,9 @@
                                 Style="{StaticResource ItemMenuButton}">
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Text="Edit" />
-                                    <MenuFlyoutItem Text="Delete" />
-                                    <MenuFlyoutItem Text="Move to another section" />
+                                    <MenuFlyoutItem x:Name="MnEditItem" Text="Edit" Click="MnEditItem_Click" />
+                                    <MenuFlyoutItem x:Name="MnDeleteItem" Text="Delete" Click="MnDeleteItem_Click" />
+                                    <MenuFlyoutItem x:Name="MnMoveToAnotherSection" Text="Move to another section" Click="MnMoveToAnotherSection_Click" />
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>

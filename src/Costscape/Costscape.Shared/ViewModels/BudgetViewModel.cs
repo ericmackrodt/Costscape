@@ -165,6 +165,12 @@ namespace Costscape.ViewModels
             get { return _updateItemCommand; }
         }
 
+        private ICommand _removeItemCommand;
+        public ICommand RemoveItemCommand
+        {
+            get { return _removeItemCommand; }
+        }
+
         public BudgetViewModel(IDataManager dataManager, IBroadcaster broadcaster)
         {
             _dataManager = dataManager;
@@ -174,6 +180,7 @@ namespace Costscape.ViewModels
             _addNewSectionCommand = new RelayCommandAsync(AddNewSection);
             _valueUpdatedCommand = new RelayCommand(ValueUpdated);
             _updateItemCommand = new RelayCommandAsync(UpdateItem);
+            _removeItemCommand = new RelayCommandAsync<BudgetItem>(RemoveItem);
         }
 
         public async override Task LoadData(object arg)
@@ -243,6 +250,16 @@ namespace Costscape.ViewModels
             var item = SelectedBudgetItem;
             SelectedBudgetItem = null;
             await _dataManager.UpdateObject(item);
+            Recalculate();
+            if (BudgetItemEdited != null)
+                BudgetItemEdited(this, new EventArgs());
+        }
+
+        private async Task RemoveItem(BudgetItem arg)
+        {
+            await _dataManager.RemoveObject(arg);
+            var section = BudgetSections.First(o => o.BudgetSectionID == arg.BudgetSectionID);
+            section.Items.Remove(arg);
             Recalculate();
             if (BudgetItemEdited != null)
                 BudgetItemEdited(this, new EventArgs());
