@@ -48,25 +48,30 @@ namespace Costscape.Common
 
         public async Task<BudgetSection> AddSectionToBudget(Budget budget, BudgetSection section)
         {
+            section.Budget = budget;
+            section.BudgetID = budget.BudgetID;
+
             await _connection.InsertAsync(section);
 
             if (budget.Sections == null)
                 budget.Sections = new List<BudgetSection>();
 
             budget.Sections.Add(section);
-            await _connection.UpdateWithChildrenAsync(budget);
             return section;
         }
 
         public async Task<BudgetItem> AddItemToSection(BudgetSection section, BudgetItem item)
         {
+            item.Section = section;
+            item.BudgetSectionID = section.BudgetSectionID;
+
             await _connection.InsertAsync(item);
 
             if (section.Items == null)
                 section.Items = new ObservableCollection<BudgetItem>();
 
-            section.Items.Add(item);
-            await _connection.UpdateWithChildrenAsync(section);
+            section.Items.Insert(0, item);
+            
             return item;
         }
 

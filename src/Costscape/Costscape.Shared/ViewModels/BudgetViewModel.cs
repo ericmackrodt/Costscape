@@ -159,10 +159,10 @@ namespace Costscape.ViewModels
             get { return _valueUpdatedCommand; }
         }
 
-        private ICommand _saveValueCommand;
-        public ICommand SaveValueCommand
+        private ICommand _updateItemCommand;
+        public ICommand UpdateItemCommand
         {
-            get { return _saveValueCommand; }
+            get { return _updateItemCommand; }
         }
 
         public BudgetViewModel(IDataManager dataManager, IBroadcaster broadcaster)
@@ -172,8 +172,8 @@ namespace Costscape.ViewModels
 
             _addNewItemCommand = new RelayCommandAsync<BudgetSection>(AddNewItem);
             _addNewSectionCommand = new RelayCommandAsync(AddNewSection);
-            _valueUpdatedCommand = new RelayCommand<BudgetItem>(ValueUpdated) { IsEnabled = true };
-            _saveValueCommand = new RelayCommandAsync<BudgetItem>(SaveValue);
+            _valueUpdatedCommand = new RelayCommand(ValueUpdated);
+            _updateItemCommand = new RelayCommandAsync(UpdateItem);
         }
 
         public async override Task LoadData(object arg)
@@ -205,18 +205,9 @@ namespace Costscape.ViewModels
             Recalculate();
         }
 
-        private void ValueUpdated(BudgetItem obj)
+        private void ValueUpdated(object obj)
         {
-            Recalculate();
-        }
-
-        private async Task SaveValue(BudgetItem arg)
-        {
-            if (arg.Updated)
-            {
-                await _dataManager.UpdateObject(arg);
-                arg.Updated = false;
-            }
+            NewBudgetItem.Value = Math.Round(NewBudgetItem.Value, 2);
         }
 
         private async Task AddNewSection(object obj)
@@ -224,7 +215,6 @@ namespace Costscape.ViewModels
             if (BudgetSections == null)
                 BudgetSections = new ObservableCollection<BudgetSection>();
 
-            NewBudgetSection.SectionType = BudgetSectionType.Credit;
             var section = NewBudgetSection;
             NewBudgetSection = null;
             section = await _dataManager.AddSectionToBudget(_currentBudget, section);
@@ -248,6 +238,16 @@ namespace Costscape.ViewModels
                 NewBudgetItemCreated(this, new EventArgs());
         }
 
+        private async Task UpdateItem(object arg)
+        {
+            var item = SelectedBudgetItem;
+            SelectedBudgetItem = null;
+            await _dataManager.UpdateObject(item);
+            Recalculate();
+            if (BudgetItemEdited != null)
+                BudgetItemEdited(this, new EventArgs());
+        }
+
         private void OnValueChanged(BudgetItem obj)
         {
             Recalculate();
@@ -265,7 +265,7 @@ namespace Costscape.ViewModels
             var total = BudgetSections.Sum(o => o.SectionType == BudgetSectionType.Debit ? o.Total * -1 : o.Total);
 
             if (_currentBudget.HasInitialBudget)
-                MoneyLeft.Value = InitialBudget.Value - total;
+                MoneyLeft.Value = InitialBudget.Value + total;
 
             Totals.Value = total;
         }

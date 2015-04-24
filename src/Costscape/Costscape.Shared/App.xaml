@@ -16,6 +16,7 @@
                     <Color x:Key="DefaultTextColor">#FFFFFFFF</Color>
                     <Color x:Key="SecondaryTextColor">#FF000000</Color>
                     <Color x:Key="TextBackgroundColor">#FFFFFFFF</Color>
+                    <Color x:Key="TextBackgroundNoHighlight">#CCFFFFFF</Color>
                     <Color x:Key="DisabledBackgroundColor">#FFCCCCCC</Color>
 
                     <SolidColorBrush x:Key="MainPageBudgetListBackground" Color="{ThemeResource ThemeDefaultColor}" />
@@ -31,6 +32,8 @@
                     <SolidColorBrush x:Key="CellBackgroundBrush" Color="{ThemeResource ThemeSecondaryColor}" />
                     <SolidColorBrush x:Key="CellFocusForegroundBrush" Color="{ThemeResource SecondaryTextColor}" />
                     <SolidColorBrush x:Key="TotalCellBackgroundBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
+
+                    <SolidColorBrush x:Key="MenuItemForegroundBrush" Color="{ThemeResource SecondaryTextColor}" />
 
                     <!--Default Brushes-->
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource DefaultBackgroundColor}" />
@@ -56,6 +59,25 @@
                     <SolidColorBrush x:Key="ButtonPointerOverForegroundThemeBrush" Color="#FF000000" />-->
                     <SolidColorBrush x:Key="ButtonPressedBackgroundThemeBrush" Color="{ThemeResource ThemeSecondaryColor}" />
                     <SolidColorBrush x:Key="ButtonPressedForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
+                    <!--Default ComboBox-->
+                    <SolidColorBrush x:Key="ComboBoxBackgroundThemeBrush" Color="{ThemeResource TextBackgroundNoHighlight}" />
+                    <SolidColorBrush x:Key="ComboBoxBorderThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="ComboBoxForegroundThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="ComboBoxHighlightedBackgroundThemeBrush" Color="{ThemeResource TextBackgroundColor}" />
+                    <SolidColorBrush x:Key="ComboBoxHighlightedBorderThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="ComboBoxHighlightedForegroundThemeBrush" Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="ComboBoxItemSelectedForegroundThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="ComboBoxPressedBackgroundThemeBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="ComboBoxPressedBorderThemeBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="ComboBoxArrowForegroundThemeBrush " Color="{ThemeResource SecondaryTextColor}" />
+                    <SolidColorBrush x:Key="ComboBoxArrowPressedForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
+                    <SolidColorBrush x:Key="ComboBoxFocusedBackgroundThemeBrush" Color="{ThemeResource TextBackgroundColor}" />
+                    <SolidColorBrush x:Key="ComboBoxFocusedBorderThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="ComboBoxFocusedForegroundThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
+                    <SolidColorBrush x:Key="ComboBoxHeaderForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
+                    <SolidColorBrush x:Key="ComboBoxItemPressedBackgroundThemeBrush" Color="{ThemeResource ThemeSecondaryColor}" />
+                    <SolidColorBrush x:Key="ComboBoxItemPressedForegroundThemeBrush" Color="{ThemeResource DefaultTextColor}" />
+                    <SolidColorBrush x:Key="PhoneHighContrastSelectedForegroundThemeBrush" Color="{ThemeResource ThemeDefaultColor}" />
 
                     <!--AppBar-->
                     <SolidColorBrush x:Key="AppBarBackgroundThemeBrush" Color="{ThemeResource SecondaryBackgroundColor}" />
@@ -105,6 +127,21 @@
                 <Setter Property="Background" Value="{ThemeResource ButtonBackgroundThemeBrush}" />
             </Style>
 
+            <!--ComboBox -->
+            <Style TargetType="ComboBox">
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource DefaultLabelTextBlock}" Text="{Binding}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--MenuFlyoutItem-->
+            <Style TargetType="MenuFlyoutItem">
+                <Setter Property="Foreground" Value="{ThemeResource MenuItemForegroundBrush}" />
+            </Style>
             
             <ResourceDictionary.MergedDictionaries>    
                 <ResourceDictionary Source="Resources/PlatformDictionary.xaml" />
