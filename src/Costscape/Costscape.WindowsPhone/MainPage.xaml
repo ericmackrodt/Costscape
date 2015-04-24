@@ -10,6 +10,7 @@
     xmlns:behaviors="using:Costscape.Common.Behaviors"
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
     xmlns:telerikCore="using:Telerik.Core"
+    xmlns:telerikData="using:Telerik.UI.Xaml.Controls.Data"
     mc:Ignorable="d"
     RequestedTheme="Default"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -43,20 +44,20 @@
         </Flyout>
     </Page.Resources>
     <Grid>
-        <telerikPrimitives:RadDataBoundListBox x:Name="BudgetList" ItemsSource="{Binding Budgets}"
+        <telerikData:RadDataBoundListBox x:Name="BudgetList" ItemsSource="{Binding Budgets}"
                                                 Margin="12,12,12,0"
                                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                 SelectionChanged="BudgetList_SelectionChanged"
                                                 ItemTemplate="{StaticResource BudgetItemTemplate}">
-            <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+            <telerikData:RadDataBoundListBox.ItemAddedAnimation>
                 <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
                     <telerikCore:RadFadeAnimation.Easing>
                         <CubicEase EasingMode="EaseOut"/>
                     </telerikCore:RadFadeAnimation.Easing>
                 </telerikCore:RadFadeAnimation>
-            </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-        </telerikPrimitives:RadDataBoundListBox>
+            </telerikData:RadDataBoundListBox.ItemAddedAnimation>
+        </telerikData:RadDataBoundListBox>
     </Grid>
     <Page.BottomAppBar>
         <CommandBar IsSticky="True">

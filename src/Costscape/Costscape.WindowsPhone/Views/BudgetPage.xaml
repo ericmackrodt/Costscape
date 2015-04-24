@@ -10,6 +10,7 @@
     xmlns:converters="using:Costscape.Common.Converters"
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
     xmlns:telerikCore="using:Telerik.Core"
+    xmlns:telerikData="using:Telerik.UI.Xaml.Controls.Data"
     x:Name="BudgetPageElement"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -101,16 +102,16 @@
             </StackPanel>
 
             <!--Grid Data-->
-            <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding BudgetSections}"
+            <telerikData:RadDataBoundListBox ItemsSource="{Binding BudgetSections}"
                                                ItemAnimationMode="PlayAll">
-                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                <telerikData:RadDataBoundListBox.ItemAddedAnimation>
                     <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
                         <telerikCore:RadFadeAnimation.Easing>
                             <CubicEase EasingMode="EaseOut"/>
                         </telerikCore:RadFadeAnimation.Easing>
                     </telerikCore:RadFadeAnimation>
-                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                </telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                <telerikData:RadDataBoundListBox.ItemTemplate>
                     <DataTemplate>
                         <!--Section Header-->
                         <StackPanel>
@@ -131,17 +132,17 @@
                             </Grid>
 
                             <!--Section Items-->
-                            <telerikPrimitives:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
+                            <telerikData:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
                                                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="RadDataBoundListBox_SelectionChanged">
-                                <telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
+                                <telerikData:RadDataBoundListBox.ItemAddedAnimation>
                                     <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
                                         <telerikCore:RadFadeAnimation.Easing>
                                             <CubicEase EasingMode="EaseOut"/>
                                         </telerikCore:RadFadeAnimation.Easing>
                                     </telerikCore:RadFadeAnimation>
-                                </telerikPrimitives:RadDataBoundListBox.ItemAddedAnimation>
-                            </telerikPrimitives:RadDataBoundListBox>
+                                </telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                            </telerikData:RadDataBoundListBox>
 
                             <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Left">
                                 <Border Style="{StaticResource BorderCell}">
@@ -159,11 +160,11 @@
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
-                </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                <telerikPrimitives:RadDataBoundListBox.ListFooterContent>
+                </telerikData:RadDataBoundListBox.ItemTemplate>
+                <telerikData:RadDataBoundListBox.ListFooterContent>
                     <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultTotalTemplate}" />
-                </telerikPrimitives:RadDataBoundListBox.ListFooterContent>
-            </telerikPrimitives:RadDataBoundListBox>
+                </telerikData:RadDataBoundListBox.ListFooterContent>
+            </telerikData:RadDataBoundListBox>
         </StackPanel>
     </Grid>
 
