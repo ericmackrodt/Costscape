@@ -130,6 +130,21 @@
                     </Grid>
                 </StackPanel>
             </Flyout>
+            
+            <Flyout x:Key="ChangeItemSectionFlyout" x:Name="ChangeItemSectionFlyout">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Select a section:" />
+                    <ListBox Grid.Row="1" 
+                             x:Name="LstChangeItemSection" 
+                             ItemsSource="{Binding ItemSectionChangeList}"
+                             SelectionChanged="LstChangeItemSection_SelectionChanged"
+                             DisplayMemberPath="Key.Name"/>
+                </Grid>
+            </Flyout>
         </ResourceDictionary>
     </Page.Resources>
     <Grid x:Name="LayoutRoot">
@@ -201,7 +216,7 @@
                             <!--Section Items-->
                             <telerikData:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
                                                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="RadDataBoundListBox_SelectionChanged">
+                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <telerikData:RadDataBoundListBox.ItemAddedAnimation>
                                     <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
                                         <telerikCore:RadFadeAnimation.Easing>

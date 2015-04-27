@@ -136,12 +136,6 @@ namespace Costscape.Views
             ViewModel.NewBudgetSection = null;
         }
 
-        private void RadDataBoundListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ViewModel.SelectedBudgetItem = e.AddedItems.FirstOrDefault() as BudgetItem;
-            EditItemFlyout.ShowAt(this);
-        }
-
         private void BtnAddItem_Click(object sender, RoutedEventArgs e)
         {
             var btn = (sender as Button);
@@ -194,7 +188,22 @@ namespace Costscape.Views
 
         private void MnMoveToAnotherSection_Click(object sender, RoutedEventArgs e)
         {
+            var item = (sender as MenuFlyoutItem).DataContext as BudgetItem;
+            if (ViewModel.SetupItemSectionChangeCommand.CanExecute(item))
+                ViewModel.SetupItemSectionChangeCommand.Execute(item);
+            ChangeItemSectionFlyout.ShowAt(this);
+        }
 
+        private void LstChangeItemSection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LstChangeItemSection.SelectedIndex == -1)
+                return;
+
+            var selection = (KeyValuePair<BudgetSection, BudgetItem>)LstChangeItemSection.SelectedItem;
+            if (ViewModel.ChangeItemSectionCommand.CanExecute(selection))
+                ViewModel.ChangeItemSectionCommand.Execute(selection);
+            LstChangeItemSection.SelectedIndex = -1;
+            ChangeItemSectionFlyout.Hide();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Costscape.Common
         Task GetBudgetSections(Budget budget);
         Task<BudgetSection> AddSectionToBudget(Budget budget, BudgetSection section);
         Task<BudgetItem> AddItemToSection(BudgetSection section, BudgetItem item);
+        Task ChangeItemSection(BudgetItem item, BudgetSection newSection, BudgetSection oldSection);
         Task UpdateObject(object obj);
         Task InsertObject(object obj);
         Task RemoveObject(object obj);

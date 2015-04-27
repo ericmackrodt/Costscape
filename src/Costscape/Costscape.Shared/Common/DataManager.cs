@@ -75,6 +75,22 @@ namespace Costscape.Common
             return item;
         }
 
+        public async Task ChangeItemSection(BudgetItem item, BudgetSection newSection, BudgetSection oldSection)
+        {
+            item.Section = newSection;
+            item.BudgetSectionID = newSection.BudgetSectionID;
+
+            await _connection.UpdateAsync(item);
+
+            if (oldSection.Items.Contains(item))
+                oldSection.Items.Remove(item);
+
+            if (newSection.Items == null)
+                newSection.Items = new ObservableCollection<BudgetItem>();
+
+            newSection.Items.Add(item);
+        }
+
         public async Task UpdateObject(object obj)
         {
             await _connection.UpdateAsync(obj);
@@ -88,6 +104,6 @@ namespace Costscape.Common
         public async Task RemoveObject(object obj)
         {
             await _connection.DeleteAsync(obj);
-        }
+        }        
     }
 }

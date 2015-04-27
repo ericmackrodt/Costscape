@@ -24,6 +24,7 @@ namespace Costscape.ViewModels
         private IDataManager _dataManager;
         private IBroadcaster _broadcaster;
         private Budget _currentBudget;
+        private bool _isItemSectionChangeSet;
 
         private ObservableCollection<BudgetSection> _budgetSections;
         public ObservableCollection<BudgetSection> BudgetSections
@@ -32,6 +33,17 @@ namespace Costscape.ViewModels
             set
             {
                 _budgetSections = value;
+                NotifyChanged();
+            }
+        }
+
+        private Dictionary<BudgetSection, BudgetItem> _itemSectionChangeList;
+        public Dictionary<BudgetSection, BudgetItem> ItemSectionChangeList
+        {
+            get { return _itemSectionChangeList; }
+            set
+            {
+                _itemSectionChangeList = value;
                 NotifyChanged();
             }
         }
@@ -171,6 +183,18 @@ namespace Costscape.ViewModels
             get { return _removeItemCommand; }
         }
 
+        private ICommand _setupItemSectionChangeCommand;
+        public ICommand SetupItemSectionChangeCommand
+        {
+            get { return _setupItemSectionChangeCommand; }
+        }
+
+        private ICommand _changeItemSectionCommand;
+        public ICommand ChangeItemSectionCommand
+        {
+            get { return _changeItemSectionCommand; }
+        }
+
         public BudgetViewModel(IDataManager dataManager, IBroadcaster broadcaster)
         {
             _dataManager = dataManager;
@@ -181,6 +205,8 @@ namespace Costscape.ViewModels
             _valueUpdatedCommand = new RelayCommand(ValueUpdated);
             _updateItemCommand = new RelayCommandAsync(UpdateItem);
             _removeItemCommand = new RelayCommandAsync<BudgetItem>(RemoveItem);
+            _setupItemSectionChangeCommand = new RelayCommand<BudgetItem>(SetupItemSectionChange);
+            _changeItemSectionCommand = new RelayCommandAsync<KeyValuePair<BudgetSection, BudgetItem>>(ChangeItemSection);
         }
 
         public async override Task LoadData(object arg)
@@ -263,6 +289,21 @@ namespace Costscape.ViewModels
             Recalculate();
             if (BudgetItemEdited != null)
                 BudgetItemEdited(this, new EventArgs());
+        }
+
+        private void SetupItemSectionChange(BudgetItem arg)
+        {
+            ItemSectionChangeList = BudgetSections.ToDictionary(k => k, v => arg);
+            _isItemSectionChangeSet = true;
+        }
+
+        private async Task ChangeItemSection(KeyValuePair<BudgetSection, BudgetItem> arg)
+        {
+            if (!_isItemSectionChangeSet)
+                throw new Exception("Item section change is not set!");
+
+            var oldSection = BudgetSections.FirstOrDefault(o => o.BudgetSectionID == arg.Value.BudgetSectionID);
+            await _dataManager.ChangeItemSection(arg.Value, arg.Key, oldSection);
         }
 
         private void OnValueChanged(BudgetItem obj)
