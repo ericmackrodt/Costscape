@@ -136,6 +136,9 @@
     <Reference Include="Broadcaster">
       <HintPath>..\..\packages\Broadcaster.1.0.1.0\lib\portable-net45+sl50+win+wpa81+wp80\Broadcaster.dll</HintPath>
     </Reference>
+    <Reference Include="DrawerLayout">
+      <HintPath>..\..\packages\DrawerLayout.1.0.4\lib\DrawerLayout.dll</HintPath>
+    </Reference>
     <Reference Include="MVVMBasic, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\MVVMBasic.1.1.0.2\lib\portable-net45+win+wpa81+wp80\MVVMBasic.dll</HintPath>
@@ -169,12 +172,15 @@
     <SDKReference Include="Microsoft.VCLibs, version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WP81, Version=3.8.8.3">
+    <SDKReference Include="SQLite.WP81, Version=3.8.9">
       <Name>SQLite for Windows Phone 8.1</Name>
     </SDKReference>
     <SDKReference Include="Telerik UI For Windows Universal, Version=2015.1.420.45">
       <Name>Telerik UI For Windows Phone 8.1</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UserControls\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

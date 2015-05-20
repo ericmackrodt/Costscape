@@ -94,6 +94,8 @@ namespace Costscape.Models
 
         public void RecalculateTotals()
         {
+            if (Items == null) return;
+
             Total = Items.Sum(o => o.Value);
         }
     }

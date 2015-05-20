@@ -11,6 +11,7 @@
     xmlns:telerikPrimitives="using:Telerik.UI.Xaml.Controls.Primitives"
     xmlns:telerikCore="using:Telerik.Core"
     xmlns:telerikData="using:Telerik.UI.Xaml.Controls.Data"
+    xmlns:drawerLayout="using:DrawerLayout"
     x:Name="BudgetPageElement"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -24,43 +25,30 @@
 
             <converters:BudgetTypeConverter x:Key="BudgetTypeConverter" />
 
+            <MenuFlyout x:Name="ItemMenuFlyout">
+                <MenuFlyoutItem x:Name="MnEditItem" Text="Edit" Click="MnEditItem_Click" />
+                <MenuFlyoutItem x:Name="MnDeleteItem" Text="Delete" Click="MnDeleteItem_Click" />
+                <MenuFlyoutItem x:Name="MnMoveToAnotherSection" Text="Move to another section" Click="MnMoveToAnotherSection_Click" />
+            </MenuFlyout>
+
             <DataTemplate x:Key="DefaultItemDetailTemplate">
-                <StackPanel Orientation="Horizontal" Margin="0">
-                    <Grid Margin="0" HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="BtnItem" 
-                                Grid.Column="0" 
-                                Content="..." 
-                                VerticalAlignment="Stretch"
-                                Style="{StaticResource ItemMenuButton}">
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem x:Name="MnEditItem" Text="Edit" Click="MnEditItem_Click" />
-                                    <MenuFlyoutItem x:Name="MnDeleteItem" Text="Delete" Click="MnDeleteItem_Click" />
-                                    <MenuFlyoutItem x:Name="MnMoveToAnotherSection" Text="Move to another section" Click="MnMoveToAnotherSection_Click" />
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-                        <Border Grid.Column="1"
-                                x:Name="ItemNameBorder"
-                                Tapped="ItemNameBorder_Tapped"
-                                Style="{StaticResource BorderCell}">
-                            <TextBlock Text="{Binding Title}" 
+                <StackPanel x:Name="ItemRow" Orientation="Horizontal" Margin="0" Tapped="ItemRow_Tapped">
+                    <Border x:Name="ItemNameBorder"
+                            Tapped="ItemNameBorder_Tapped"
+                            Style="{StaticResource BorderCell}">
+                        <TextBlock Text="{Binding Title}" 
                                        Style="{StaticResource TextBlockCell}" />
-                        </Border>
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
                         </i:Interaction.Behaviors>
-                    </Grid>
+                    </Border>
+                    
                     <Border Style="{StaticResource BorderCell}">
                         <TextBlock Text="{Binding Value, Converter={StaticResource DecimalConverter}}" Style="{StaticResource TextBlockNumberCell}" />
                         <i:Interaction.Behaviors>
                             <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
                         </i:Interaction.Behaviors>
-                    </Border>
+                    </Border>                  
                 </StackPanel>
             </DataTemplate>
 
@@ -130,15 +118,15 @@
                     </Grid>
                 </StackPanel>
             </Flyout>
-            
+
             <Flyout x:Key="ChangeItemSectionFlyout" x:Name="ChangeItemSectionFlyout">
-                <Grid>
+                <Grid Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="Select a section:" />
-                    <ListBox Grid.Row="1" 
+                    <TextBlock Grid.Row="0" Text="Select a section:" Style="{ThemeResource DefaultHeaderTextBlock}" />
+                    <ListBox Grid.Row="1"
                              x:Name="LstChangeItemSection" 
                              ItemsSource="{Binding ItemSectionChangeList}"
                              SelectionChanged="LstChangeItemSection_SelectionChanged"
@@ -147,112 +135,125 @@
             </Flyout>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid x:Name="LayoutRoot">
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition/>
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
 
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
+        
+        <!--Page Header-->
         <Border Grid.Row="0" Background="{ThemeResource PageHeaderBackgroundBrush}"
                 Padding="10">
             <TextBlock Text="{Binding CurrentBudget.Name}" Style="{ThemeResource DefaultTextBlock}" />
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="1,5,1,0">
-            <!--Grid Header-->
-            <StackPanel Orientation="Horizontal" 
-                        Margin="0,1,0,0">
-                <Border Style="{StaticResource BorderHeader}">
-                    <TextBlock Text="Item Title" Style="{StaticResource TextBlockCell}" />
-                    <i:Interaction.Behaviors>
-                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
-                    </i:Interaction.Behaviors>
-                </Border>
+        <drawerLayout:DrawerLayout Grid.Row="1" x:Name="MainDrawerLayout">
+            <!--Main Content-->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <Border Style="{StaticResource BorderHeader}">
-                    <TextBlock Text="BRL$" Style="{StaticResource TextBlockCell}" />
-                    <i:Interaction.Behaviors>
-                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
-                    </i:Interaction.Behaviors>
-                </Border>
-            </StackPanel>
+                <!--Grid Header-->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" 
+                    Margin="0,1,0,0">
+                    <Border Style="{StaticResource BorderHeader}">
+                        <TextBlock Text="Item Title" Style="{StaticResource TextBlockCell}" />
+                        <i:Interaction.Behaviors>
+                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                        </i:Interaction.Behaviors>
+                    </Border>
 
-            <!--Grid Data-->
-            <telerikData:RadDataBoundListBox ItemsSource="{Binding BudgetSections}"
+                    <Border Style="{StaticResource BorderHeader}">
+                        <TextBlock Text="BRL$" Style="{StaticResource TextBlockCell}" />
+                        <i:Interaction.Behaviors>
+                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                        </i:Interaction.Behaviors>
+                    </Border>
+                </StackPanel>
+
+                <!--Grid Data-->
+                <telerikData:RadDataBoundListBox Grid.Row="2" ItemsSource="{Binding BudgetSections}"
                                                ItemAnimationMode="PlayAll">
-                <telerikData:RadDataBoundListBox.ItemAddedAnimation>
-                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
-                        <telerikCore:RadFadeAnimation.Easing>
-                            <CubicEase EasingMode="EaseOut"/>
-                        </telerikCore:RadFadeAnimation.Easing>
-                    </telerikCore:RadFadeAnimation>
-                </telerikData:RadDataBoundListBox.ItemAddedAnimation>
-                <telerikData:RadDataBoundListBox.ItemTemplate>
-                    <DataTemplate>
-                        <!--Section Header-->
-                        <StackPanel>
-                            <Grid VerticalAlignment="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Style="{StaticResource SectionHeaderBorder}" VerticalAlignment="Top">
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource TextBlockCell}" />
-                                </Border>
-                                <Button Grid.Column="1"
+                    <telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                        <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                            <telerikCore:RadFadeAnimation.Easing>
+                                <CubicEase EasingMode="EaseOut"/>
+                            </telerikCore:RadFadeAnimation.Easing>
+                        </telerikCore:RadFadeAnimation>
+                    </telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                    <telerikData:RadDataBoundListBox.ItemTemplate>
+                        <DataTemplate>
+                            <!--Section Header-->
+                            <StackPanel>
+                                <Grid VerticalAlignment="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Style="{StaticResource SectionHeaderBorder}" VerticalAlignment="Top">
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource TextBlockCell}" />
+                                    </Border>
+                                    <Button Grid.Column="1"
                                         VerticalAlignment="Top"
                                         Style="{StaticResource SectionHeaderButton}"
                                         x:Name="BtnAddItem" Click="BtnAddItem_Click">
-                                    <TextBlock Text="+" Style="{StaticResource TextBlockCell}" />
-                                </Button>
-                            </Grid>
+                                        <TextBlock Text="+" Style="{StaticResource TextBlockCell}" />
+                                    </Button>
+                                </Grid>
 
-                            <!--Section Items-->
-                            <telerikData:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
+                                <!--Section Items-->
+                                <telerikData:RadDataBoundListBox ItemsSource="{Binding Path=Items}" ItemTemplate="{StaticResource DefaultItemDetailTemplate}"
                                                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <telerikData:RadDataBoundListBox.ItemAddedAnimation>
-                                    <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
-                                        <telerikCore:RadFadeAnimation.Easing>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </telerikCore:RadFadeAnimation.Easing>
-                                    </telerikCore:RadFadeAnimation>
-                                </telerikData:RadDataBoundListBox.ItemAddedAnimation>
-                            </telerikData:RadDataBoundListBox>
+                                    <telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                                        <telerikCore:RadFadeAnimation EndOpacity="1" StartOpacity="0" Duration="0:0:1">
+                                            <telerikCore:RadFadeAnimation.Easing>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </telerikCore:RadFadeAnimation.Easing>
+                                        </telerikCore:RadFadeAnimation>
+                                    </telerikData:RadDataBoundListBox.ItemAddedAnimation>
+                                </telerikData:RadDataBoundListBox>
 
-                            <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Left">
-                                <Border Style="{StaticResource BorderCell}">
-                                    <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
-                                    <i:Interaction.Behaviors>
-                                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
-                                    </i:Interaction.Behaviors>
-                                </Border>
-                                <Border Style="{StaticResource BorderCell}">
-                                    <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
-                                    <i:Interaction.Behaviors>
-                                        <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
-                                    </i:Interaction.Behaviors>
-                                </Border>
+                                <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Left">
+                                    <Border Style="{StaticResource BorderCell}">
+                                        <TextBlock Text="Total" Style="{StaticResource TextBlockCell}" />
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemNamePercentage}" />
+                                        </i:Interaction.Behaviors>
+                                    </Border>
+                                    <Border Style="{StaticResource BorderCell}">
+                                        <TextBlock Text="{Binding Total}" Style="{StaticResource TextBlockCell}" />
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:WindowDimensionBehavior WidthMultiple="1" WidthPercentage="{StaticResource ItemValuePercentage}" />
+                                        </i:Interaction.Behaviors>
+                                    </Border>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </DataTemplate>
-                </telerikData:RadDataBoundListBox.ItemTemplate>
-                <telerikData:RadDataBoundListBox.ListFooterContent>
-                    <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultTotalTemplate}" />
-                </telerikData:RadDataBoundListBox.ListFooterContent>
-            </telerikData:RadDataBoundListBox>
-        </StackPanel>
-    </Grid>
+                        </DataTemplate>
+                    </telerikData:RadDataBoundListBox.ItemTemplate>
+                    <telerikData:RadDataBoundListBox.ListFooterContent>
+                        <ItemsControl ItemsSource="{Binding Path=DataContext.TotalCollection, ElementName=BudgetPageElement}" ItemTemplate="{StaticResource DefaultTotalTemplate}" />
+                    </telerikData:RadDataBoundListBox.ListFooterContent>
+                </telerikData:RadDataBoundListBox>
+            </Grid>
 
+            <!--Drawer-->
+            <Grid Background="{ThemeResource AppDrawerBackgroundBrush}">
+                <StackPanel Orientation="Vertical">
+                    <Button x:Name="BtnAddNewSection" Content="Add new section"
+                            Flyout="{StaticResource AddSectionFlyout}"
+                            Style="{StaticResource FramelessButton}"/>
+                </StackPanel>
+            </Grid>
+        </drawerLayout:DrawerLayout>
+    </Grid>
     <Page.BottomAppBar>
         <CommandBar IsSticky="False" x:Name="AppBar">
             <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Accept" IsCompact="False" Label="Open" Click="AppBarButton_Click" />
                 <AppBarButton Icon="Add" IsCompact="False" Label="Add Section" Flyout="{StaticResource AddSectionFlyout}" />
             </CommandBar.PrimaryCommands>
         </CommandBar>

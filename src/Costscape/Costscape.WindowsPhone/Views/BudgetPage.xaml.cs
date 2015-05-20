@@ -34,6 +34,7 @@ namespace Costscape.Views
         public BudgetPage()
         {
             this.InitializeComponent();
+            MainDrawerLayout.InitializeDrawerLayout();
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
@@ -204,6 +205,20 @@ namespace Costscape.Views
                 ViewModel.ChangeItemSectionCommand.Execute(selection);
             LstChangeItemSection.SelectedIndex = -1;
             ChangeItemSectionFlyout.Hide();
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainDrawerLayout.IsDrawerOpen)
+                MainDrawerLayout.CloseDrawer();
+            else
+                MainDrawerLayout.OpenDrawer();
+        }
+
+        private void ItemRow_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var row = sender as StackPanel;
+            ItemMenuFlyout.ShowAt(row);
         }
     }
 }
